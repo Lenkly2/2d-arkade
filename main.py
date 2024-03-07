@@ -44,14 +44,13 @@ class Owner():
         if self.rect.x - enemy_name.rect.x < 150 and self.rect.x - enemy_name.rect.x > -30:
           
             if self.rect.y - enemy_name.rect.y < 155 and self.rect.y - enemy_name.rect.y > - 20:
-                print(self.rect.y - enemy.rect.y)
                 enemy_name.image = pygame.transform.scale(pygame.image.load(enemy_name.image_list[3]),(enemy_name.w,enemy_name.h))
                 enemy_name.hp -= 3
                 global dmgp
                 dmgp = 1
                 global Fight
                 Fight = True
-                print("HP:",enemy_name.hp)
+                
 
 # вікно
 window_width = 800
@@ -59,6 +58,7 @@ window_height = 600
 window = pygame.display.set_mode((window_width,window_height))
 background1 = pygame.transform.scale(pygame.image.load("ground.png"),(window_width,window_height))
 background2 = pygame.transform.scale(pygame.image.load("ground2.png"),(window_width,window_height))
+background3 = pygame.transform.scale(pygame.image.load("ground3.png"),(window_width,window_height))
 pygame.font.init()
 # персонажі
 
@@ -90,23 +90,29 @@ while game:
     if Location == 0:
         window.blit(background1,(0,0))
         window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
-    if Location >= 1:
+    if Location == 1:
         window.blit(background2,(0,0))
+        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
+    if Location >= 2:
+        window.blit(background3,(0,0))
         window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
     # виведення
     main_character.reset()
     if Location == 0:
         enemy_golem.reset()
-
-    if Location >= 1:
+        
+    if Location == 1:
+        #під нові локації
+        enemy_golem.reset()
+    if Location >= 2:
         #під нові локації
         enemy_golem.reset()
 
     # ворог на локації
     if Location == 0:
         enemy = enemy_golem
-
-    if Location >= 1:
+        window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
+    if Location >= 2:
         #під нові локації
         enemy = enemy_golem
         
