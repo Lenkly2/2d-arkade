@@ -40,6 +40,7 @@ class Owner():
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
 
     def attack(self,enemy_name):
+        self.image = pygame.transform.scale(pygame.image.load(self.image_list[4]),(self.w,self.h))
         if self.rect.x - enemy_name.rect.x < 150 and self.rect.x - enemy_name.rect.x > -30:
           
             if self.rect.y - enemy_name.rect.y < 155 and self.rect.y - enemy_name.rect.y > - 20:
@@ -58,13 +59,17 @@ window_height = 600
 window = pygame.display.set_mode((window_width,window_height))
 background1 = pygame.transform.scale(pygame.image.load("ground.png"),(window_width,window_height))
 background2 = pygame.transform.scale(pygame.image.load("ground2.png"),(window_width,window_height))
+pygame.font.init()
 # персонажі
 
-main_images = ['main_character_back.png','main_character_front.png','main_character_left.png','main_character_right.png',]
-main_character = Owner(main_images[1],50,450,50,70,50,2,main_images)
+main_images = ['main_character_back.png','main_character_front.png','main_character_left.png','main_character_right.png','main_character_right_attack.png']
+main_character = Owner(main_images[1],50,450,50,70,70,2,main_images)
 golem_images = ['golem_left.png','golem_right.png','golem_attack.png','golem_left_dmg.png']
-enemy_golem = Owner(golem_images[0],600,50,50,60,30,3,golem_images)
+enemy_golem = Owner(golem_images[0],600,50,70,80,50,3,golem_images)
+chest_images = ['chest.png']
+chest = Owner(chest_images[0],1000,1000,70,60,3,0,chest_images)
 #змінні
+mfont = pygame.font.Font(None,20)
 global Fight
 Fight = False
 global time_for_Attack
@@ -80,11 +85,14 @@ while game:
         if e.type == pygame.MOUSEBUTTONDOWN:
             main_character.attack(enemy)
 
+    
     #фон локацій
     if Location == 0:
         window.blit(background1,(0,0))
+        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
     if Location >= 1:
         window.blit(background2,(0,0))
+        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
     # виведення
     main_character.reset()
     if Location == 0:
@@ -113,12 +121,16 @@ while game:
             time_for_Attack = time.monotonic()
         if time.monotonic() - time_for_Attack >= 10:
             enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
+            if main_character.rect.x - enemy.rect.x < 150 and main_character.rect.x - enemy.rect.x > -30:
+                if main_character.rect.y - enemy.rect.y < 155 and main_character.rect.y - enemy.rect.y > - 20:
+                    main_character.hp -= 5
             time_for_Attack = time.monotonic()
         if dmgp == 1:
             if time.monotonic() - time_for_Attack >= 1:
                     enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
                     time_for_Attack = time.monotonic()
                     dmgp = 0
+
         if enemy.hp <= 0:
             enemy.w = 50
             enemy.h = 60
