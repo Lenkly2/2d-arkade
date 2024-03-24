@@ -19,24 +19,35 @@ class Owner():
         
     def move(self):
         Key = pygame.key.get_pressed()
+        global Locationm
+        global once_lock
         if Key[pygame.K_w] and self.rect.y > -50:
             self.rect.y = self.rect.y - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
-            if self.rect.y < 0 and Fight == False and enemy_death == True:
+            if self.rect.y < 0 and Fight == False and Locationm == 0:
                 global Location
                 Location += 1
                 self.rect.y = window_height - self.h
         if Key[pygame.K_s] and self.rect.y < window_height + self.h:
             self.rect.y = self.rect.y + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[1]),(self.w,self.h))
-            if self.rect.y > window_height - self.h and Fight == False:
+            if self.rect.y > window_height - self.h and Fight == False and Locationm == 0:
                 if Location > 0:
                     Location -= 1
                 self.rect.y = 50
         if Key[pygame.K_d] and self.rect.x < window_width - self.w:
             self.rect.x = self.rect.x + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[3]),(self.w,self.h))
+
+            if self.rect.x >= window_width - self.w and Fight == False and riloc == 1:
+                if Locationm > 0:
+                    Locationm -=1
+                    self.rect.x = self.rect.x + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
+            if self.rect.x <= 0 + self.w and Fight == False and riloc == 1 and once_lock == 1:
+                Locationm +=1
+                self.rect.x = window_width - self.w
+        
             self.rect.x = self.rect.x - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
 
@@ -58,8 +69,7 @@ class Owner():
                     chest_fight = True
                 else:
                     Fight = True
-                time_for_Attack_player = time.monotonic()
-                    
+
 
 # вікно
 window_width = 800
@@ -68,13 +78,16 @@ window = pygame.display.set_mode((window_width,window_height))
 background1 = pygame.transform.scale(pygame.image.load("ground.png"),(window_width,window_height))
 background2 = pygame.transform.scale(pygame.image.load("ground2.png"),(window_width,window_height))
 background3 = pygame.transform.scale(pygame.image.load("ground3.png"),(window_width,window_height))
+background4 = pygame.transform.scale(pygame.image.load("ground4.png"),(window_width,window_height))
+hearts = pygame.transform.scale(pygame.image.load("heart.png"),(25,25))
+coin = pygame.transform.scale(pygame.image.load("coin.png"),(25,25))
 pygame.font.init()
 # персонажі
 
 main_images = ['main_character_back.png','main_character_front.png','main_character_left.png','main_character_right.png','main_character_right_attack.png']
 main_character = Owner(main_images[1],50,450,50,70,3,2,main_images,3)
-golem_images = ['golem_left.png','golem_right.png','golem_attack.png','golem_left_dmg.png']
-enemy_golem = Owner(golem_images[0],600,50,70,80,50,3,golem_images,1)
+golem_images = ['golem_left.png','golem_right.png','golem_attack.png','golem_left_dmg.png','golem_right_dmg.png']
+enemy_golem = Owner(golem_images[0],500,50,70,80,50,3,golem_images,1)
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
 bl_atacck = ['attack_bl_right.png','attack_bl_up.png']
@@ -105,8 +118,15 @@ Loc = 0
 attack_style = 0
 once_attack = 0
 tm = 5
+once_lock = 1
 hp_resiste = time.monotonic()
+time_for_dmg = time.monotonic()
 hp_resister = 0
+coins = 0
+riloc = 0
+death = 0
+global Locationm
+Locationm = 0
 # гра
 game = True
 while game:
@@ -122,29 +142,42 @@ while game:
     #фон локацій
     if Location == 0:
         window.blit(background1,(0,0))
-        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
     if Location == 1:
-        window.blit(background2,(0,0))
-        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
+        riloc = 1
+        if Locationm == 0:
+            window.blit(background2,(0,0))
         if spawn == True:
-            if main_character.damage < 5:
+            if chest.hp > 0:
                 chest.rect.x = 200
-
+        if Locationm == 1:
+            window.blit(background4,(0,0))
+            once_lock = 0
+        else:
+            once_lock = 1
     if Location >= 2:
+        riloc = 0
         window.blit(background3,(0,0))
-        window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(20,10))
+
+    if death == 1:
+        death = 0
         
     # ворог на локації
+    window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(30,10))
+    window.blit(mfont.render(str(coins),True,(0,0,0)),(window_width-30,10))
+    window.blit(hearts,(5,10))
+    window.blit(coin,(window_width-60,10))
     if Location == 0:
         enemy = enemy_golem
         window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
+
     if Location == 1:
-        #під нові локації
         enemy = chest
+
     if Location >= 2:
         #під нові локації
         enemy = enemy_golem
         window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
+
         if spawn == True:
             enemy.rect.x = 500
             enemy.hp = 80
@@ -173,7 +206,7 @@ while game:
     if chest_fight == True:
         if enemy.hp <= 0:
             enemy.rect.x = 1000
-            main_character.damage += 2
+            coins += 5
             enemy_death = True
             Loc = Location
             chest_fight = False
@@ -189,6 +222,17 @@ while game:
         block_atack6.reset()
         block_atack7.reset()
         #????
+        if main_character.hp <= 0:
+            death = 1
+        if death == 1:
+            enemy.w = 70
+            enemy.h = 80
+            enemy.rect.x = 500
+            enemy.rect.y = 50
+            enemy.hp = 50
+            main_character.hp = 3
+            enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
+            Fight = False
         Loc = Location
         enemy.rect.x = 350
         enemy.rect.y = 250
@@ -201,15 +245,15 @@ while game:
                 tm = 5
                 time_for_style = time.monotonic()
             if attack_style == 1:
-                tm = 10
+                tm = 8
                 time_for_style = time.monotonic()
 
 
         if attack_style == 0:
-            if time.monotonic() - time_for_Attack >= 6:
+            if time.monotonic() - time_for_Attack >= 5:
                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
                 time_for_Attack = time.monotonic()
-            if time.monotonic() - time_for_Attack >= 4:
+            if time.monotonic() - time_for_Attack >= 3:
                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
                 if main_character.rect.x - enemy.rect.x < 180 and main_character.rect.x - enemy.rect.x > -40:
                     if main_character.rect.y - enemy.rect.y < 170 and main_character.rect.y - enemy.rect.y > - 30:
@@ -217,7 +261,6 @@ while game:
                 time_for_Attack = time.monotonic()
         if attack_style == 1:
 
-                
             if once_attack == 1:
                 block_atack.rect.x = enemy.rect.x+60
                 block_atack.rect.y = enemy.rect.y-80
@@ -233,6 +276,7 @@ while game:
 
                 once_attack = 0
                 time_for_Attack = time.monotonic()
+
             if time.monotonic() - time_for_Attack >= 1: 
                 block_atack.rect.x = 1000
                 block_atack1.rect.x = 1000
@@ -249,14 +293,14 @@ while game:
                 block_atack2.rect.x = enemy.rect.x-80
                 block_atack3.rect.x = enemy.rect.x+160
                 time_for_Attack = time.monotonic()+5
+                
             if time.monotonic() - time_for_style >= 3: 
                 block_atack2.rect.x -= 5
                 block_atack3.rect.x += 5
                 block_atack.rect.y -= 5
                 block_atack1.rect.y += 5
+
                 if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
-                    hp_resister = 1
-                if hp_resister == 1:
                     if time.monotonic() - hp_resiste >= 2:
                         main_character.hp -= 1
                         hp_resiste = time.monotonic()
@@ -271,21 +315,22 @@ while game:
                 block_atack6.rect.x = 1000
                 block_atack7.rect.x = 1000
                 time_for_Attack = time.monotonic()
+
         if dmgp == 1:
-            if time.monotonic() - time_for_Attack >= 1:
+            if time.monotonic() - time_for_dmg >= 2:
                     enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
-                    time_for_Attack = time.monotonic()
+                    time_for_dmg = time.monotonic()
                     dmgp = 0
 
         if enemy.hp <= 0:
             enemy.w = 70
             enemy.h = 80
             enemy.rect.x = 1000
+            coins += 5
             enemy_death = True
             Fight = False
             main_character.hp = 3
         
-
 
     main_character.move()
     pygame.display.update()
