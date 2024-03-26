@@ -212,6 +212,9 @@ while game:
         #під нові локації
         enemy = enemy_golem
         window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
+        if spawn == True:
+            enemy.rect.x = 500
+            enemy.hp = 80
 
     if Location >= 3:
         #під нові локації
@@ -220,7 +223,6 @@ while game:
         if spawn == True:
             enemy.rect.x = 500
             enemy.hp = 80
-            enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
 
     # виведення
     main_character.reset()
@@ -292,7 +294,6 @@ while game:
                         main_character.hp -= enemy.damage
                 time_for_Attack = time.monotonic()
         if attack_style == 1:
-
             if once_attack == 1:
                 block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
                 block_atack.rect.y = enemy.rect.y-enemy.h
@@ -308,16 +309,6 @@ while game:
 
                 once_attack = 0
                 time_for_Attack = time.monotonic()
-
-            if time.monotonic() - time_for_Attack >= 1: 
-                block_atack.rect.x = 1000
-                block_atack1.rect.x = 1000
-                block_atack2.rect.x = 1000
-                block_atack3.rect.x = 1000
-                block_atack4.rect.x = 1000
-                block_atack5.rect.x = 1000
-                block_atack6.rect.x = 1000
-                block_atack7.rect.x = 1000
                 
             if time.monotonic() - time_for_Attack >= 1.5: 
                 block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
