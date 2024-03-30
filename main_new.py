@@ -29,7 +29,7 @@ class Owner():
                 global Location
                 Location += 1
                 self.rect.y = window_height - self.h
-        if Key[pygame.K_s] and self.rect.y < window_height + self.h:
+        if Key[pygame.K_s] and self.rect.y < window_height - (self.h/2):
             self.rect.y = self.rect.y + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[1]),(self.w,self.h))
             direct = "down"
@@ -102,6 +102,8 @@ house = pygame.transform.scale(pygame.image.load("house.jpg"),(600,400))
 house_in = pygame.transform.scale(pygame.image.load("house_in.jpg"),(window_width,window_height))
 hearts = pygame.transform.scale(pygame.image.load("heart.png"),(25,25))
 coin = pygame.transform.scale(pygame.image.load("coin.png"),(25,25))
+hotbar_img = pygame.transform.scale(pygame.image.load("hotbar.png"),(75,75))
+sword_img = pygame.transform.scale(pygame.image.load("sword.png"),(75,75))
 pygame.font.init()
 # персонажі
 
@@ -148,6 +150,7 @@ death = 0
 Locationy = 0
 hotbar = 0
 clock = pygame.time.Clock()
+
 # гра
 game = True
 while game:
@@ -200,20 +203,17 @@ while game:
         if Locationy == "magaz":
             window.blit(house_in,(0,0))
             once_lock = 0
-        else:
+        if Locationy != 1 and Locationy != "magaz":
             once_lock = 1
     if Location == 2:
         window.blit(background3,(0,0))
+
 
     if Location >= 3:
         window.blit(background3,(0,0))
 
         
     # ворог на локації
-    window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(30,10))
-    window.blit(mfont.render(str(coins),True,(0,0,0)),(window_width-30,10))
-    window.blit(hearts,(5,10))
-    window.blit(coin,(window_width-60,10))
     if Location == 0:
         enemy = enemy_golem
         window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
@@ -239,6 +239,14 @@ while game:
 
     # виведення
     main_character.reset()
+    window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(30,10))
+    window.blit(mfont.render(str(coins),True,(0,0,0)),(30,40))
+    window.blit(hearts,(5,10))
+    window.blit(coin,(5,30))
+    window.blit(hotbar_img,(window_width-75,15))
+    window.blit(hotbar_img,(window_width-75,90))
+    window.blit(hotbar_img,(window_width-75,165))
+    window.blit(sword_img,(window_width-75,15))
     if Location == 0:
         enemy_golem.reset()
         
@@ -282,7 +290,7 @@ while game:
         if death == 1:
             enemy.hp = 50
             main_character.hp = 3
-            main_character.rect.y = window_width - main_character.h
+            main_character.rect.y = window_height - main_character.h
             Fight = False
         Loc = Location
         if time.monotonic() - time_for_style >= tm:

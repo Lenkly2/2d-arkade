@@ -18,14 +18,14 @@ class Owner():
         window.blit(self.image,(self.rect.x,self.rect.y))
     def move(self):
         Key = pygame.key.get_pressed()
-        global Locationm
+        global Locationy
         global once_lock
         global direct
         if Key[pygame.K_w] and self.rect.y > -50:
             self.rect.y = self.rect.y - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
             direct = "up"
-            if self.rect.y < 0 and Fight == False and Locationm == 0:
+            if self.rect.y < 0 and Fight == False and Locationy == 0:
                 global Location
                 Location += 1
                 self.rect.y = window_height - self.h
@@ -33,7 +33,7 @@ class Owner():
             self.rect.y = self.rect.y + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[1]),(self.w,self.h))
             direct = "down"
-            if self.rect.y > window_height - self.h and Fight == False and Locationm == 0:
+            if self.rect.y > window_height - self.h and Fight == False and Locationy == 0:
                 if Location > 0:
                     Location -= 1
                 self.rect.y = 50
@@ -41,16 +41,16 @@ class Owner():
             self.rect.x = self.rect.x + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[3]),(self.w,self.h))
             direct = "right"
-            if self.rect.x >= window_width - self.w and Fight == False and riloc == 1:
-                if Locationm > 0:
-                    Locationm -=1
+            if self.rect.x >= window_width - self.w and Fight == False and Location == 1 and Locationy != "magaz":
+                if Locationy > 0:
+                    Locationy -=1
                     self.rect.x = 0 + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
             self.rect.x = self.rect.x - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
             direct = "left"
-            if self.rect.x <= 0 + self.w and Fight == False and riloc == 1 and once_lock == 1:
-                Locationm +=1
+            if self.rect.x <= 0 + self.w and Fight == False and Location == 1 and once_lock == 1 and Locationy != "magaz":
+                Locationy +=1
                 self.rect.x = window_width - self.w
 
     def dash(self):
@@ -129,6 +129,7 @@ time_for_Attack = time.monotonic()
 time_for_Attack_player = time.monotonic()
 time_for_style = time.monotonic()
 dash_time = time.monotonic()
+dash_col = 3
 dmgp = 0
 Location = 0
 enemy_death = False
@@ -143,9 +144,8 @@ hp_resiste = time.monotonic()
 time_for_dmg = time.monotonic()
 hp_resister = 0
 coins = 0
-riloc = 0
 death = 0
-Locationm = 0
+Locationy = 0
 hotbar = 0
 # гра
 game = True
@@ -161,9 +161,21 @@ while game:
         if e.type == pygame.KEYDOWN:
             key = pygame.key.get_pressed()
             if key[pygame.K_SPACE]:
-                if time.monotonic() - dash_time >= 5:
+                if dash_col > 0:
                     main_character.dash()
-                    dash_time = time.monotonic()
+                    dash_col -= 1
+            if key[pygame.K_e] and main_character.rect.x > 330 and main_character.rect.x < 400 and main_character.rect.y > 220 and main_character.rect.y < 260:
+                if Locationy == 1:
+                    Locationy = "magaz"
+
+                if main_character.rect.x > 330 and main_character.rect.x < 400 and main_character.rect.y > 320 and main_character.rect.y < 360:
+                    if Locationy == "magaz":
+                        Locationy = 1
+    #відновлення ривка
+    if time.monotonic() - dash_time >= 5:
+        if dash_col < 3:
+            dash_col += 1
+        dash_time = time.monotonic()
     #возродження
     if death == 1:
         death = 0
@@ -172,24 +184,24 @@ while game:
         window.blit(background1,(0,0))
 
     if Location == 1:
-        riloc = 1
-        if Locationm == 0:
+        if Locationy == 0:
             window.blit(background2,(0,0))
-        if spawn == True and Locationm == 0:
+        if spawn == True and Locationy == 0:
             if chest.hp > 0:
                 chest.rect.x = 200
         else:
             chest.rect.x = 1000
         #магаз
-        if Locationm == 1:
+        if Locationy == 1:
             window.blit(background4,(0,0))
             window.blit(house,(100,50))
             once_lock = 0
+        if Locationy == "magaz":
+            window.blit(house_in,(0,0))
+            once_lock = 0
         else:
             once_lock = 1
-
     if Location == 2:
-        riloc = 0
         window.blit(background3,(0,0))
 
     if Location >= 3:
