@@ -213,7 +213,6 @@ while game:
         window.blit(background3,(0,0))
 
     # ворог на локації
-    window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
     if Location == 0:
         enemy = enemy_golem
 
@@ -234,7 +233,8 @@ while game:
         if spawn == True:
             enemy.rect.x = 500
             enemy.hp = 80
-
+            
+    window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
     # виведення
     main_character.reset()
     window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(30,10))
