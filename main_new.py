@@ -205,18 +205,17 @@ while game:
             once_lock = 0
         if Locationy != 1 and Locationy != "magaz":
             once_lock = 1
+
     if Location == 2:
         window.blit(background3,(0,0))
-
 
     if Location >= 3:
         window.blit(background3,(0,0))
 
-        
     # ворог на локації
+    window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
     if Location == 0:
         enemy = enemy_golem
-        window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
 
     if Location == 1:
         enemy = chest
@@ -224,7 +223,6 @@ while game:
     if Location == 2:
         #під нові локації
         enemy = enemy_golem
-        window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
         if spawn == True:
             enemy.rect.x = 500
             enemy.hp = 80
@@ -302,7 +300,6 @@ while game:
             if attack_style == 1:
                 tm = 6.5
                 time_for_style = time.monotonic()
-
 
         if attack_style == 0:
             if time.monotonic() - time_for_Attack >= 5:
