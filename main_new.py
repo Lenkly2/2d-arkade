@@ -110,6 +110,7 @@ background1 = pygame.transform.scale(pygame.image.load("ground.png"),(window_wid
 background2 = pygame.transform.scale(pygame.image.load("ground2.png"),(window_width,window_height))
 background3 = pygame.transform.scale(pygame.image.load("ground3.png"),(window_width,window_height))
 background4 = pygame.transform.scale(pygame.image.load("ground_magaz.png"),(window_width,window_height))
+background5 = pygame.transform.scale(pygame.image.load("ground4.png"),(window_width,window_height))
 house = pygame.transform.scale(pygame.image.load("house.jpg"),(600,400))
 house_in = pygame.transform.scale(pygame.image.load("house_in.jpg"),(window_width,window_height))
 hearts = pygame.transform.scale(pygame.image.load("heart.png"),(25,25))
@@ -160,6 +161,7 @@ once_lock = 1
 hp_resiste = time.monotonic()
 time_for_dmg = time.monotonic()
 pre_attack_time = time.monotonic()
+time_fix = time.monotonic()
 hp_resister = 0
 coins = 0
 death = 0
@@ -191,7 +193,7 @@ while game:
                 if Locationy == 1:
                     Locationy = "magaz"
 
-            if key[pygame.K_e] and main_character.rect.x > 100 and main_character.rect.x < 150 and main_character.rect.y > 340 and main_character.rect.y < 380:
+            if key[pygame.K_e] and main_character.rect.x > 100 and main_character.rect.x < 150 and main_character.rect.y > 340 and main_character.rect.y < 440:
                 if Locationy == "magaz":
                     Locationy = 1
             if key[pygame.K_f]:
@@ -231,11 +233,14 @@ while game:
                 window.blit(hotbar_img,(100,100))
                 window.blit(wand_img,(100,100))
                 window.blit(coin,(100,30))
+                window.blit(mfont.render("20",True,(0,0,0)),(130,30))
                 window.blit(hotbar_img,(200,100))
                 window.blit(heart_img,(200,100))
+                window.blit(mfont.render("15",True,(0,0,0)),(230,30))
                 window.blit(coin,(200,30))
                 window.blit(hotbar_img,(300,100))
                 window.blit(coin,(300,30))
+                window.blit(mfont.render("10",True,(0,0,0)),(330,30))
             once_lock = 0
         if Locationy != 1 and Locationy != "magaz":
             once_lock = 1
@@ -244,7 +249,7 @@ while game:
         window.blit(background3,(0,0))
 
     if Location >= 3:
-        window.blit(background3,(0,0))
+        window.blit(background5,(0,0))
 
     # ворог на локації
     if Location == 0:
@@ -322,18 +327,23 @@ while game:
             main_character.hp = main_heart
             Fight = False
         Loc = Location
-        if attack_style == 0:
-            if time.monotonic() - time_for_Attack >= 2.5:
-                pre_attack_time = time.monotonic()+2
-                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
-                if main_character.rect.x - enemy.rect.x < enemy.w+15 and main_character.rect.x - enemy.rect.x > -enemy.w-15:
-                    if main_character.rect.y - enemy.rect.y < enemy.h+15 and main_character.rect.y - enemy.rect.y > -enemy.h-15:
-                        main_character.hp -= enemy.damage
-                    pre_attack_time = time.monotonic()
+        
+        if time.monotonic() - time_for_Attack >= 2:
+            pre_attack_time = time.monotonic()+2
+        
+            enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
+            if main_character.rect.x - enemy.rect.x < enemy.w+15 and main_character.rect.x - enemy.rect.x > -enemy.w-15:
+                if main_character.rect.y - enemy.rect.y < enemy.h+15 and main_character.rect.y - enemy.rect.y > -enemy.h-15:
+                    main_character.hp -= enemy.damage
                     enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
+                    pre_attack_time = time.monotonic()
                     time_for_Attack = time.monotonic()
-            if time.monotonic() - pre_attack_time >= 1:
-                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[5]),(enemy.w,enemy.h))
+            if time.monotonic() - time_for_Attack >= 2.3:
+                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
+                pre_attack_time = time.monotonic()
+                time_for_Attack = time.monotonic()
+        if time.monotonic() - pre_attack_time >= 0.8:
+            enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[5]),(enemy.w,enemy.h))
 
         if dmgp == 1:
             if time.monotonic() - time_for_dmg >= 2:
