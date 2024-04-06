@@ -21,6 +21,7 @@ class Owner():
         global Locationy
         global once_lock
         global direct
+        global Location
         if Key[pygame.K_w] and self.rect.y > -50:
             if Locationy != "magaz":
                 self.rect.y = self.rect.y - self.speed
@@ -28,8 +29,7 @@ class Owner():
                 self.rect.y = self.rect.y - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
             direct = "up"
-            if self.rect.y < 0 and Fight == False and Locationy == 0:
-                global Location
+            if self.rect.y < 0 and Fight == False and Locationy != 1 and Location < 4 and Locationy != "magaz":
                 Location += 1
                 self.rect.y = window_height - self.h
         if Key[pygame.K_s] and self.rect.y < window_height - (self.h/2):
@@ -54,6 +54,9 @@ class Owner():
                 if Locationy > 0:
                     Locationy -=1
                     self.rect.x = 0 + self.w
+            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4: 
+                Locationy -= 1
+                self.rect.x = 0 + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
             if Locationy != "magaz":
                 self.rect.x = self.rect.x - self.speed
@@ -61,7 +64,11 @@ class Owner():
                 self.rect.x = self.rect.x - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
             direct = "left"
-            if self.rect.x <= 0 + self.w and Fight == False and Location == 1 and once_lock == 1 and Locationy != "magaz":
+            if self.rect.x <= 0 + self.w and Fight == False and Location == 1 and once_lock == 1 and Locationy != "magaz" :
+                Locationy +=1
+                self.rect.x = window_width - self.w
+
+            if self.rect.x <= 0 + self.w and Locationy <= -1 and Location == 3:
                 Locationy +=1
                 self.rect.x = window_width - self.w
 
@@ -111,6 +118,11 @@ background2 = pygame.transform.scale(pygame.image.load("ground2.png"),(window_wi
 background3 = pygame.transform.scale(pygame.image.load("ground3.png"),(window_width,window_height))
 background4 = pygame.transform.scale(pygame.image.load("ground_magaz.png"),(window_width,window_height))
 background5 = pygame.transform.scale(pygame.image.load("ground4.png"),(window_width,window_height))
+background6 = pygame.transform.scale(pygame.image.load("ground5.png"),(window_width,window_height))
+background_right1 = pygame.transform.scale(pygame.image.load("ground_r.png"),(window_width,window_height))
+background_right2 = pygame.transform.scale(pygame.image.load("ground_r2.png"),(window_width,window_height))
+background_right3 = pygame.transform.scale(pygame.image.load("ground_r3.png"),(window_width,window_height))
+background_boss = pygame.transform.scale(pygame.image.load("ground_boss.png"),(window_width,window_height))
 house = pygame.transform.scale(pygame.image.load("house.jpg"),(600,400))
 house_in = pygame.transform.scale(pygame.image.load("house_in.jpg"),(window_width,window_height))
 hearts = pygame.transform.scale(pygame.image.load("heart.png"),(25,25))
@@ -206,7 +218,6 @@ while game:
         if dash_col < 3:
             dash_col += 1
         dash_time = time.monotonic()
-    
     #возродження
     if death == 1:
         death = 0
@@ -239,6 +250,7 @@ while game:
                 window.blit(mfont.render("15",True,(0,0,0)),(230,30))
                 window.blit(coin,(200,30))
                 window.blit(hotbar_img,(300,100))
+                window.blit(sword_img,(300,100))
                 window.blit(coin,(300,30))
                 window.blit(mfont.render("10",True,(0,0,0)),(330,30))
             once_lock = 0
@@ -247,9 +259,19 @@ while game:
 
     if Location == 2:
         window.blit(background3,(0,0))
-
-    if Location >= 3:
-        window.blit(background5,(0,0))
+    if Location == 3:
+        if Locationy == 0:
+            window.blit(background5,(0,0))
+        if Locationy == -1:
+            window.blit(background_right1,(0,0))
+        if Locationy == -2:
+            window.blit(background_boss,(0,0))
+        if Locationy == -3:
+            window.blit(background_right2,(0,0))
+        if Locationy == -4:
+            window.blit(background_right3,(0,0))
+    if Location >= 4:
+        window.blit(background6,(0,0))
 
     # ворог на локації
     if Location == 0:
@@ -308,15 +330,13 @@ while game:
             chest_fight = False
     
     if Fight == True:
-        direct_enemy_x = main_character.rect.x
-        direct_enemy_y = main_character.rect.y
-        if enemy.rect.x < direct_enemy_x:
+        if enemy.rect.x < main_character.rect.x:
             enemy.rect.x += enemy.speed
-        if enemy.rect.y < direct_enemy_y:
+        if enemy.rect.y < main_character.rect.y:
             enemy.rect.y += enemy.speed
-        if enemy.rect.x > direct_enemy_x:
+        if enemy.rect.x > main_character.rect.x:
             enemy.rect.x -= enemy.speed
-        if enemy.rect.y > direct_enemy_y:
+        if enemy.rect.y > main_character.rect.y:
             enemy.rect.y -= enemy.speed
         #????
         if main_character.hp <= 0:
