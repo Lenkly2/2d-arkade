@@ -116,6 +116,8 @@ class Owner():
         global pre_attack_time
         global dmgp
         global time_for_dmg
+        global coins
+        global Fight
         if time.monotonic() - time_for_Attack >= 2:
             pre_attack_time = time.monotonic()+2
         
@@ -137,6 +139,12 @@ class Owner():
                     self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
                     time_for_dmg = time.monotonic()
                     dmgp = 0
+        if enemy.hp <= 0:
+            enemy.rect.x = 1000
+            coins += 5
+            enemys_death.append(Location)
+            Fight = False
+            main_character.hp = main_heart
     def attack(self,enemy_name):
         if direct == "right":
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[4]),(self.w,self.h))
@@ -242,6 +250,7 @@ Locationy = 0
 Locationyx = 0
 hotbar = 1
 shop = 0
+wand = 0
 magic_sharp = []
 enemys_death = []
 main_heart = 3
@@ -481,6 +490,8 @@ while game:
     window.blit(hotbar_img,(window_width-80,90))
     window.blit(hotbar_img,(window_width-80,165))
     window.blit(sword_img,(window_width-80,15))
+    if wand == 1:
+         window.blit(wand_img,(window_width-80,90))
     if dash_col == 3:
         window.blit(dash_img,(110,window_height-40))
     if dash_col >= 2:
@@ -505,13 +516,7 @@ while game:
                     Fight = False
                 Loc = Location
                 enemy.enemy_attack()
-
-                if enemy.hp <= 0:
-                    enemy.rect.x = 1000
-                    coins += 5
-                    enemys_death.append(Location)
-                    Fight = False
-                    main_character.hp = main_heart
+                
         if Location == 4:
             enemy_golem1.move_enemy()
             enemy_golem2.move_enemy()
