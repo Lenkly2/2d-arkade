@@ -139,8 +139,8 @@ class Owner():
                     self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
                     time_for_dmg = time.monotonic()
                     dmgp = 0
-        if enemy.hp <= 0:
-            enemy.rect.x = 1000
+        if self.hp <= 0:
+            self.rect.x = 1000
             coins += 5
             enemys_death.append(Location)
             Fight = False
@@ -516,7 +516,7 @@ while game:
                     Fight = False
                 Loc = Location
                 enemy.enemy_attack()
-                
+
         if Location == 4:
             enemy_golem1.move_enemy()
             enemy_golem2.move_enemy()
