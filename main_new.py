@@ -49,17 +49,17 @@ class Owner():
                 self.rect.y = self.rect.y + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[1]),(self.w,self.h))
             direct = "down"
-            if self.rect.y > window_height - self.h and boss_fight == False and Locationy == 0 and Location > 0:
+            if self.rect.y > window_height - self.h and boss_fight == False and Locationy == 0 and Location > 0 and button_press != 1:
                 Location -= 1
                 self.rect.y = 50
             try:
                 if self.rect.y > window_height- self.h and Locationy <=-3:
                     if Locationy == -3 and Locationyx > 0:
                         Locationyx -= 1
-                        self.rect.y = 0 + self.h
+                        self.rect.y = 50
                     if Locationy == -4 and Locationyx > -3:
                         Locationyx -= 1
-                        self.rect.y = 0 + self.h
+                        self.rect.y = 50
             except:
                 error = 1
         if Key[pygame.K_d] and self.rect.x < window_width - self.w:
@@ -141,10 +141,16 @@ class Owner():
                     dmgp = 0
         if self.hp <= 0:
             self.rect.x = 1000
-            coins += 5
             enemys_death.append(Location)
-            Fight = False
-            main_character.hp = main_heart
+
+            if button_press != 1:
+                coins += 5
+                main_character.hp = main_heart
+                Fight = False
+            if button_press == 1 and enemy_golem1.hp <= 0 and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
+                Fight = False 
+    def wand_attack(self):
+        print("g")
     def attack(self,enemy_name):
         if direct == "right":
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[4]),(self.w,self.h))
@@ -191,6 +197,7 @@ hearts = pygame.transform.scale(pygame.image.load("heart.png"),(25,25))
 heart_img = pygame.transform.scale(pygame.image.load("heart.png"),(75,75))
 coin = pygame.transform.scale(pygame.image.load("coin.png"),(25,25))
 hotbar_img = pygame.transform.scale(pygame.image.load("hotbar.png"),(75,75))
+hotbar_select_img = pygame.transform.scale(pygame.image.load("hotbar_select.png"),(75,75))
 sword_img = pygame.transform.scale(pygame.image.load("sword.png"),(75,75))
 wand_img = pygame.transform.scale(pygame.image.load("magic_wand.png"),(75,75))
 dash_img = pygame.transform.scale(pygame.image.load("dash.png"),(40,20))
@@ -202,11 +209,11 @@ main_images = ['main_character_back.png','main_character_front.png','main_charac
 main_character = Owner(main_images[1],50,450,50,70,3,3,main_images,3)
 golem_images = ['golem_left.png','golem_right.png','golem_attack.png','golem_left_dmg.png','golem_right_dmg.png','golem_pre_attack.png']
 enemy_golem1 = Owner(golem_images[0],500,100,70,80,50,2,golem_images,1)
-enemy_golem2 = Owner(golem_images[0],1500,200,70,80,50,2,golem_images,1)
-enemy_golem3 = Owner(golem_images[0],1500,300,70,80,50,2,golem_images,1)
-enemy_golem4 = Owner(golem_images[0],1500,100,70,80,50,2,golem_images,1)
-enemy_golem5 = Owner(golem_images[0],1500,200,70,80,50,2,golem_images,1)
-enemy_golem6 = Owner(golem_images[0],1500,300,70,80,50,2,golem_images,1)
+enemy_golem2 = Owner(golem_images[0],1500,200,70,80,60,2,golem_images,1)
+enemy_golem3 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
+enemy_golem4 = Owner(golem_images[0],1500,100,70,80,60,2,golem_images,1)
+enemy_golem5 = Owner(golem_images[0],1500,200,70,80,60,2,golem_images,1)
+enemy_golem6 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
 
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
@@ -254,6 +261,7 @@ wand = 0
 magic_sharp = []
 enemys_death = []
 main_heart = 3
+button_press = 0
 clock = pygame.time.Clock()
 # гра
 game = True
@@ -273,36 +281,46 @@ while game:
                         main_character.attack(enemy_golem5)
                         main_character.attack(enemy_golem6)
                         time_for_cooldown = time.monotonic()
+                if hotbar == 2:
+                    main_character.wand_attack()
         if Location == 4:
             m_b_x, m_b_y =  pygame.mouse.get_pos()       
             if m_b_x >= 60 and m_b_x <= 110:
                 if m_b_y >= 250 and m_b_y <= 300:
                     if pygame.mouse.get_pressed()[0]:
+                        enemy_golem1.rect.y = 100
                         enemy_golem1.rect.x = 200
                         enemy_golem2.rect.x = 200
                         enemy_golem3.rect.x = 200
                         enemy_golem4.rect.x = 600
                         enemy_golem5.rect.x = 600
                         enemy_golem6.rect.x = 600
+                        enemy_golem1.hp = 60
+                        enemy_golem2.hp = 60
+                        enemy_golem3.hp = 60
+                        enemy_golem4.hp = 60
+                        enemy_golem5.hp = 60
+                        enemy_golem6.hp = 60
+                        button_press = 1
         if Locationy == "magaz":
             m_p_x, m_p_y =  pygame.mouse.get_pos()         
             if m_p_x >= 95 and m_p_x <= 150:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= wand_price:
+                        if coins >= wand_price and wand == 0:
                             wand = 1
                             coins = coins - wand_price
             if m_p_x >= 195 and m_p_x <= 250:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= hp_price and main_heart <= 50:
+                        if coins >= hp_price and main_heart <= 30:
                             main_character.hp += 2
                             main_heart += 2
                             coins = coins - hp_price
             if m_p_x >= 295 and m_p_x <= 350:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= sword_price:
+                        if coins >= sword_price and main_character.damage <= 50:
                             main_character.damage += 1
                             coins = coins - sword_price
 
@@ -420,14 +438,15 @@ while game:
         window.blit(background6,(0,0))
         window.blit(button,(60,250))
     # ворог на локації
-    if Location == 0:
+    if Location == 0 or Location == 2 or Location == 3:
         enemy = enemy_golem1
+    if Location == 0:
         try:
             if enemys_death.index(0):
                 spawn = False
         except:
             if spawn == True:
-                enemy.rect.x = 500
+                enemy.rect.x = 550
                 enemy.hp = 50
     if Location == 1:
         chest.reset()
@@ -447,26 +466,26 @@ while game:
             enemy = chest
 
     if Location == 2:
-        enemy = enemy_golem1
         try:
             if enemys_death.index(2):
                 spawn = False
         except:
             if spawn == True:
-                enemy.rect.x = 500
+                enemy.rect.x = 200
                 enemy.hp = 50
 
     if Location == 3:
         #під нові локації
-        enemy = enemy_golem1
         try:
             if enemys_death.index(3):
                 spawn = False
         except:
             if spawn == True:
-                enemy.rect.x = 500
+                enemy.rect.x = 250
                 enemy.hp = 50
-            
+    if Location == 4:
+        if button_press == 0:
+            enemy_golem1.rect.x = 1000
     # виведення
     enemy_golem1.reset()
     enemy_golem2.reset()
@@ -486,9 +505,18 @@ while game:
     window.blit(mfont.render(str(coins),True,(0,0,0)),(30,40))
     window.blit(hearts,(5,10))
     window.blit(coin,(5,30))
-    window.blit(hotbar_img,(window_width-80,15))
-    window.blit(hotbar_img,(window_width-80,90))
-    window.blit(hotbar_img,(window_width-80,165))
+    if hotbar == 1:
+        window.blit(hotbar_select_img,(window_width-80,15))
+    if hotbar != 1:
+        window.blit(hotbar_img,(window_width-80,15))
+    if hotbar == 2:
+        window.blit(hotbar_select_img,(window_width-80,90))
+    if hotbar != 2:
+        window.blit(hotbar_img,(window_width-80,90))
+    if hotbar == 3:
+        window.blit(hotbar_select_img,(window_width-80,165))
+    if hotbar != 3:
+        window.blit(hotbar_img,(window_width-80,165))
     window.blit(sword_img,(window_width-80,15))
     if wand == 1:
          window.blit(wand_img,(window_width-80,90))
@@ -505,19 +533,18 @@ while game:
         spawn = True
 
     if Fight == True:
-        if Location != 4:
+        Loc = Location
+        if button_press != 1:
             if enemy != chest:
                 enemy.move_enemy()
-                #????
                 if main_character.hp <= 0:
                     enemy.hp = 50
                     main_character.rect.y = window_height - main_character.h
                     main_character.hp = main_heart
                     Fight = False
-                Loc = Location
                 enemy.enemy_attack()
 
-        if Location == 4:
+        if button_press == 1:
             enemy_golem1.move_enemy()
             enemy_golem2.move_enemy()
             enemy_golem3.move_enemy()
@@ -531,6 +558,9 @@ while game:
             enemy_golem4.enemy_attack()
             enemy_golem5.enemy_attack()
             enemy_golem6.enemy_attack()
+            if enemy_golem1.hp and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
+                coins += 50
+                button_press = 0
             if main_character.hp <= 0:
                 enemy.hp = 50
                 main_character.rect.y = window_height - main_character.h
@@ -541,7 +571,6 @@ while game:
             if enemy.hp <= 0:
                 enemy.rect.x = 1000
                 coins += 5
-                Loc = Location
                 Fight = False
     clock.tick(100)
     main_character.move()
