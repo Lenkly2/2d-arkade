@@ -16,6 +16,8 @@ class Owner():
         self.damage = damage
     def reset(self):
         window.blit(self.image,(self.rect.x,self.rect.y))
+    def wand_reset(self,mx,my):
+        window.blit(self.image,(mx,my))
     def move(self):
         Key = pygame.key.get_pressed()
         global Locationy
@@ -149,8 +151,6 @@ class Owner():
                 Fight = False
             if button_press == 1 and enemy_golem1.hp <= 0 and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
                 Fight = False 
-    def wand_attack(self):
-        print("g")
     def attack(self,enemy_name):
         if direct == "right":
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[4]),(self.w,self.h))
@@ -160,7 +160,7 @@ class Owner():
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[6]),(self.w,self.h))
         if direct == "down":
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[7]),(self.w,self.h))
-
+        
         if self.rect.x - enemy_name.rect.x < enemy.w+10 and self.rect.x - enemy_name.rect.x > -enemy.w-10:
             if self.rect.y - enemy_name.rect.y < enemy.h+10 and self.rect.y - enemy_name.rect.y > -enemy.h-10:
                 #global
@@ -214,6 +214,7 @@ enemy_golem3 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
 enemy_golem4 = Owner(golem_images[0],1500,100,70,80,60,2,golem_images,1)
 enemy_golem5 = Owner(golem_images[0],1500,200,70,80,60,2,golem_images,1)
 enemy_golem6 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
+wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
 
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
@@ -257,11 +258,15 @@ Locationy = 0
 Locationyx = 0
 hotbar = 1
 shop = 0
-wand = 0
+wand_dmg = 5
+wand = 0 
 magic_sharp = []
 enemys_death = []
+enemys = [enemy_golem1,enemy_golem2,enemy_golem3,enemy_golem4,enemy_golem5,enemy_golem6]
 main_heart = 3
 button_press = 0
+wx = 0
+wy = 0
 clock = pygame.time.Clock()
 # гра
 game = True
@@ -274,15 +279,22 @@ while game:
                 if hotbar == 1:
                     if time.monotonic() - time_for_cooldown >= 0.7:
                         main_character.attack(enemy)
-                        main_character.attack(enemy_golem1)
-                        main_character.attack(enemy_golem2)
-                        main_character.attack(enemy_golem3)
-                        main_character.attack(enemy_golem4)
-                        main_character.attack(enemy_golem5)
-                        main_character.attack(enemy_golem6)
+                        for m in enemys:
+                            main_character.attack(m)
+
                         time_for_cooldown = time.monotonic()
-                if hotbar == 2:
-                    main_character.wand_attack()
+                if hotbar == 2 and wand == 1 and len(magic_sharp) < 7:
+                    wx,wy =  pygame.mouse.get_pos()   
+                    if time.monotonic() - time_for_cooldown >= 0.4:
+                        wand_fire = Owner("magic.png",wx,wy,50,50,1,2,None,5)
+                        magic_sharp.append(wand_fire)
+                    time_for_cooldown = time.monotonic()
+                    try:
+                        if enemys_death.index(Location):
+                            Fight = False
+                    except:
+                        Fight = True
+
         if Location == 4:
             m_b_x, m_b_y =  pygame.mouse.get_pos()       
             if m_b_x >= 60 and m_b_x <= 110:
@@ -295,12 +307,8 @@ while game:
                         enemy_golem4.rect.x = 600
                         enemy_golem5.rect.x = 600
                         enemy_golem6.rect.x = 600
-                        enemy_golem1.hp = 60
-                        enemy_golem2.hp = 60
-                        enemy_golem3.hp = 60
-                        enemy_golem4.hp = 60
-                        enemy_golem5.hp = 60
-                        enemy_golem6.hp = 60
+                        for n in enemys:
+                            n.hp = 60
                         button_press = 1
         if Locationy == "magaz":
             m_p_x, m_p_y =  pygame.mouse.get_pos()         
@@ -486,21 +494,29 @@ while game:
     if Location == 4:
         if button_press == 0:
             enemy_golem1.rect.x = 1000
+
     # виведення
-    enemy_golem1.reset()
-    enemy_golem2.reset()
-    enemy_golem3.reset()
-    enemy_golem4.reset()
-    enemy_golem5.reset()
-    enemy_golem6.reset()
+    for fires in magic_sharp:
+        if fires.rect.x < main_character.rect.x - main_character.w:
+            fires.rect.x -= fires.speed
+        if fires.rect.x > main_character.rect.x + main_character.w:
+            fires.rect.x += fires.speed
+        if fires.rect.y < main_character.rect.y - main_character.h:
+            fires.rect.y -= fires.speed
+        if fires.rect.y > main_character.rect.y + main_character.h:
+            fires.rect.y += fires.speed
+
+        if fires.rect.x > window_width or fires.rect.x < 0 or fires.rect.y > window_height or fires.rect.y < 0:
+            magic_sharp.pop(magic_sharp.index(fires))
+
+        fires.wand_reset(fires.rect.x,fires.rect.y)
+
+    for p in enemys:
+        p.reset()
     main_character.reset()
     window.blit(mfont.render(str(enemy.hp),True,(0,0,0)),(enemy.rect.x,enemy.rect.y))
-    window.blit(mfont.render(str(enemy_golem1.hp),True,(0,0,0)),(enemy_golem1.rect.x,enemy_golem1.rect.y))
-    window.blit(mfont.render(str(enemy_golem2.hp),True,(0,0,0)),(enemy_golem2.rect.x,enemy_golem2.rect.y))
-    window.blit(mfont.render(str(enemy_golem3.hp),True,(0,0,0)),(enemy_golem3.rect.x,enemy_golem3.rect.y))
-    window.blit(mfont.render(str(enemy_golem4.hp),True,(0,0,0)),(enemy_golem4.rect.x,enemy_golem4.rect.y))
-    window.blit(mfont.render(str(enemy_golem5.hp),True,(0,0,0)),(enemy_golem5.rect.x,enemy_golem5.rect.y))
-    window.blit(mfont.render(str(enemy_golem6.hp),True,(0,0,0)),(enemy_golem6.rect.x,enemy_golem6.rect.y))
+    for l in enemys:
+        window.blit(mfont.render(str(l.hp),True,(0,0,0)),(l.rect.x,l.rect.y))
     window.blit(mfont.render(str(main_character.hp),True,(0,0,0)),(30,10))
     window.blit(mfont.render(str(coins),True,(0,0,0)),(30,40))
     window.blit(hearts,(5,10))
@@ -533,6 +549,18 @@ while game:
         spawn = True
 
     if Fight == True:
+        for fires in magic_sharp:
+            try:
+                for en in enemys:
+                    if fires.rect.colliderect(en):
+                        en.hp -= wand_dmg
+                        magic_sharp.pop(magic_sharp.index(fires))
+            except:
+                error = 1
+
+
+
+
         Loc = Location
         if button_press != 1:
             if enemy != chest:
@@ -545,19 +573,10 @@ while game:
                 enemy.enemy_attack()
 
         if button_press == 1:
-            enemy_golem1.move_enemy()
-            enemy_golem2.move_enemy()
-            enemy_golem3.move_enemy()
-            enemy_golem4.move_enemy()
-            enemy_golem5.move_enemy()
-            enemy_golem6.move_enemy()
+            for i in enemys:
+                i.move_enemy()
+                i.enemy_attack()
 
-            enemy_golem1.enemy_attack()
-            enemy_golem2.enemy_attack()
-            enemy_golem3.enemy_attack()
-            enemy_golem4.enemy_attack()
-            enemy_golem5.enemy_attack()
-            enemy_golem6.enemy_attack()
             if enemy_golem1.hp and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
                 coins += 50
                 button_press = 0
