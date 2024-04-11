@@ -134,7 +134,7 @@ class Owner():
                 time_for_style = time.monotonic()
 
         if attack_style == 0:
-            
+            self.move_enemy()
             if time.monotonic() - time_for_Attack >= 2:
                 pre_attack_time = time.monotonic()+2
                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
@@ -153,51 +153,68 @@ class Owner():
                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[5]),(self.w,self.h))
         if attack_style == 1:
             if once_attack == 1:
+                wid = 40
+                heg = 80
                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
-                block_atack.rect.x = self.rect.x+self.w-(self.w/2)
-                block_atack.rect.y = self.rect.y-self.h
+                xb = self.rect.x+self.w-(self.w/2)
+                yb = self.rect.y-self.h
+                block_atack = Owner(bl_atacck[0],xb,yb,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb,yb-heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb+wid,yb-heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb-wid,yb-heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
 
-                block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
-                block_atack1.rect.y = self.rect.y+self.h
+                yb = self.rect.y+self.h
+                block_atack = Owner(bl_atacck[0],xb,yb,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb,yb+heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb+wid,yb+heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb-wid,yb+heg,wid,heg,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
 
-                block_atack2.rect.x = self.rect.x-self.w
-                block_atack2.rect.y = self.rect.y+self.h-(self.h/2)
+                xb = self.rect.x-self.w
+                yb = self.rect.y+self.h-(self.h/2)
+                block_atack = Owner(bl_atacck[0],xb,yb,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb-heg,yb,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb-heg,yb+wid,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb-heg,yb-wid,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
 
-                block_atack3.rect.x = self.rect.x+self.w
-                block_atack3.rect.y = self.rect.y+self.h-(self.h/2)
+                xb = self.rect.x+self.w
+                block_atack = Owner(bl_atacck[0],xb,yb,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb+heg,yb,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb+heg,yb-wid,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
+                block_atack = Owner(bl_atacck[0],xb+heg,yb+wid,heg,wid,0,5,bl_atacck,1)
+                bl_attack.append(block_atack)
 
                 once_attack = 0
                 time_for_Attack = time.monotonic()
                 
             if time.monotonic() - time_for_Attack >= 1.5: 
-                block_atack.rect.x = self.rect.x+self.w-(self.w/2)
-                block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
-                block_atack2.rect.x = self.rect.x-self.w
-                block_atack3.rect.x = self.rect.x+self.w
                 time_for_Attack = time.monotonic()+5
-                
-            if time.monotonic() - time_for_style >= 2.5: 
-                block_atack2.rect.x -= 5
-                block_atack3.rect.x += 5
-                block_atack.rect.y -= 5
-                block_atack1.rect.y += 5
-
-                if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
-                    if time.monotonic() - hp_resiste >= 2:
-                        main_character.hp -= 1
-                        hp_resiste = time.monotonic()
+    
+                for colid in bl_attack:
+                    if pygame.sprite.collide_rect(main_character,colid) :
+                        if time.monotonic() - hp_resiste >= 2:
+                            main_character.hp -= 1
+                            hp_resiste = time.monotonic()
             
             if time.monotonic() - time_for_style >= 5:
-                block_atack.rect.x = 1000
-                block_atack1.rect.x = 1000
-                block_atack2.rect.x = 1000
-                block_atack3.rect.x = 1000
-                block_atack4.rect.x = 1000
-                block_atack5.rect.x = 1000
-                block_atack6.rect.x = 1000
-                block_atack7.rect.x = 1000
+                for colid in bl_attack:
+                    bl_attack.pop(bl_attack.index(colid))
                 time_for_Attack = time.monotonic()
-
+        
         if dmgp == 1:
             if time.monotonic() - time_for_dmg >= 2:
                     self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
@@ -269,7 +286,6 @@ class Owner():
                     boss_fight = True
                 if Locationy != -4 and Locationyx != -2:
                     if Locationy != -2:
-                        print("g")
                         Fight = True
 
 # вікно
@@ -314,15 +330,13 @@ wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
 
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
-bl_atacck = ['attack_bl_right.png','attack_bl_up.png','attack_bl_upr.png','attack_bl_upl.png']
-block_atack = Owner(bl_atacck[1],1000,200,20,60,0,5,bl_atacck,1)
-block_atack1 = Owner(bl_atacck[1],1000,200,20,60,0,5,bl_atacck,1)
+bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png']
+block_atack = Owner(bl_atacck[0],1000,200,20,60,0,5,bl_atacck,1)
 block_atack2 = Owner(bl_atacck[0],1000,200,60,20,0,5,bl_atacck,1)
-block_atack3 = Owner(bl_atacck[0],1000,200,60,20,0,5,bl_atacck,1)
-block_atack4 = Owner(bl_atacck[2],1000,200,55,55,0,5,bl_atacck,1)
-block_atack5 = Owner(bl_atacck[2],1000,200,55,55,0,5,bl_atacck,1)
-block_atack6 = Owner(bl_atacck[3],1000,200,55,55,0,5,bl_atacck,1)
-block_atack7 = Owner(bl_atacck[3],1000,200,55,55,0,5,bl_atacck,1)
+
+
+block_atack4 = Owner(bl_atacck[0],1000,200,40,40,0,5,bl_atacck,1)
+
 
 #ціна в магазині
 wand_price = 20
@@ -363,6 +377,7 @@ enemys_death = []
 enemys_deathy = []
 enemys_deathyx = []
 boss_death = []
+bl_attack = []
 enemys = [enemy_golem1,enemy_golem2,enemy_golem3,enemy_golem4,enemy_golem5,enemy_golem6]
 main_heart = 3
 button_press = 0
@@ -613,8 +628,11 @@ while game:
                 if boss_death.index(-2):
                     boss_fight = False
             except:
+                if boss_fight == False:
+                    enemy_golem1.rect.x = 300
+                    enemy.hp = 100
                 boss_fight = True
-                enemy_golem1.rect.x = 250
+                
         if Locationy == -3:
             if Locationyx == 0:
                 try:
@@ -647,6 +665,9 @@ while game:
                     if boss_death.index(-3):
                         boss_fight = False
                 except:
+                    if boss_fight == False:
+                        enemy_golem1.rect.x = 300
+                        enemy.hp = 100
                     boss_fight = True
 
     if Location == 4:
@@ -753,15 +774,11 @@ while game:
                 coins += 5
                 Fight = False
     if boss_fight == True:
+        enemy.w = 90
+        enemy.h = 100
         #відображення атаки
-        block_atack.reset()
-        block_atack1.reset()
-        block_atack2.reset()
-        block_atack3.reset()
-        block_atack4.reset()
-        block_atack5.reset()
-        block_atack6.reset()
-        block_atack7.reset()
+        for bl_v in bl_attack:
+            bl_v.reset()
         #????
         if main_character.hp <= 0:
             enemy.hp = 50
@@ -787,6 +804,8 @@ while game:
                 boss_death.append(Locationy)
             if Locationy == -4:
                 boss_death.append(Locationyx-1)
+            enemy.h = 80
+            enemy.w = 70
             main_character.hp = main_heart
             boss_fight = False
             
@@ -794,5 +813,49 @@ while game:
     main_character.move()
     pygame.display.update()
 
+# if once_attack == 1:
+#                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
+#                 block_atack.rect.x = self.rect.x+self.w-(self.w/2)
+#                 block_atack.rect.y = self.rect.y-self.h
 
+#                 block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
+#                 block_atack1.rect.y = self.rect.y+self.h
+
+#                 block_atack2.rect.x = self.rect.x-self.w
+#                 block_atack2.rect.y = self.rect.y+self.h-(self.h/2)
+
+#                 block_atack3.rect.x = self.rect.x+self.w
+#                 block_atack3.rect.y = self.rect.y+self.h-(self.h/2)
+
+#                 once_attack = 0
+#                 time_for_Attack = time.monotonic()
+                
+#             if time.monotonic() - time_for_Attack >= 1.5: 
+#                 block_atack.rect.x = self.rect.x+self.w-(self.w/2)
+#                 block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
+#                 block_atack2.rect.x = self.rect.x-self.w
+#                 block_atack3.rect.x = self.rect.x+self.w
+#                 time_for_Attack = time.monotonic()+5
+                
+#             if time.monotonic() - time_for_style >= 2.5: 
+#                 block_atack2.rect.x -= 5
+#                 block_atack3.rect.x += 5
+#                 block_atack.rect.y -= 5
+#                 block_atack1.rect.y += 5
+
+#                 if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
+#                     if time.monotonic() - hp_resiste >= 2:
+#                         main_character.hp -= 1
+#                         hp_resiste = time.monotonic()
+            
+#             if time.monotonic() - time_for_style >= 5:
+#                 block_atack.rect.x = 1000
+#                 block_atack1.rect.x = 1000
+#                 block_atack2.rect.x = 1000
+#                 block_atack3.rect.x = 1000
+#                 block_atack4.rect.x = 1000
+#                 block_atack5.rect.x = 1000
+#                 block_atack6.rect.x = 1000
+#                 block_atack7.rect.x = 1000
+#                 time_for_Attack = time.monotonic()
 
