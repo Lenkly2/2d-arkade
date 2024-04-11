@@ -75,7 +75,7 @@ class Owner():
                 if Locationy > 0:
                     Locationy -=1
                     self.rect.x = 0 + self.w
-            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4 and Locationyx != 1: 
+            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4 and Locationyx != 1 and boss_fight == False: 
                 Locationy -= 1
                 self.rect.x = 0 + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
@@ -175,10 +175,11 @@ class Owner():
                 enemy_name.image = pygame.transform.scale(pygame.image.load(enemy_name.image_list[3]),(enemy_name.w,enemy_name.h))
                 enemy_name.hp -= self.damage
                 dmgp = 1
-                if Locationy == -4 and Locationyx == -2:
+                if Locationy == -4 and Locationyx == -2 or Locationy == -2 and Locationyx == 0:
                     boss_fight = True
-                else:
-                    Fight = True
+                if Locationy != -4 and Locationyx != -2:
+                    if Locationy != -2 and Locationyx != 0:
+                        Fight = True
 
 # вікно
 window_width = 800
@@ -287,6 +288,7 @@ while game:
             if pygame.mouse.get_pressed()[0]:
                 if hotbar == 1:
                     if time.monotonic() - time_for_cooldown >= 0.7:
+                        
                         main_character.attack(enemy)
                         for m in enemys:
                             main_character.attack(m)
@@ -303,7 +305,10 @@ while game:
                             Fight = False
 
                     except:
-                        Fight = True
+                        if Locationy != -2 or Locationy != -4:
+                            Fight = True
+                        else:
+                            boss_fight = True
 
         if Location == 4:
             m_b_x, m_b_y =  pygame.mouse.get_pos()       
@@ -511,14 +516,14 @@ while game:
                     enemy.rect.x = 200
                     enemy.hp = 50
         if Locationy == -2:
-            if Fight == False:
+            if Fight == False and boss_fight == False:
                 enemy.rect.x = 1000
             try:
                 if boss_death.index(-2):
                     boss_fight = False
             except:
                 boss_fight = True
-            boss_fight = True
+                enemy_golem1.rect.x = 250
         if Locationy == -3:
             if Locationyx == 0:
                 try:
@@ -531,11 +536,6 @@ while game:
             if Locationyx >= 1:
                 if Fight == False:
                     enemy.rect.x = 1000
-                try:
-                    if boss_death.index(-3):
-                        boss_fight = False
-                except:
-                    boss_fight = True
 
     if Locationy == -4:
             if Locationyx == 0:
@@ -550,8 +550,13 @@ while game:
                         enemy.rect.x = 200
                         enemy.hp = 50
             if Locationyx == -2:
-                if Fight == False:
+                if Fight == False and boss_fight == False:
                     enemy.rect.x = 1000
+                try:
+                    if boss_death.index(-3):
+                        boss_fight = False
+                except:
+                    boss_fight = True
 
     if Location == 4:
         if button_press == 0:
@@ -612,7 +617,6 @@ while game:
 
     if Location == Loc and Locationy == Locy and Locationyx == Locyx:
         spawn = False
-
     if Fight == True:
         for fires in magic_sharp:
             try:
@@ -657,109 +661,121 @@ while game:
                 enemy.rect.x = 1000
                 coins += 5
                 Fight = False
+    if boss_fight == True:
+        #відображення атаки
+        block_atack.reset()
+        block_atack1.reset()
+        block_atack2.reset()
+        block_atack3.reset()
+        block_atack4.reset()
+        block_atack5.reset()
+        block_atack6.reset()
+        block_atack7.reset()
+        #????
+        if main_character.hp <= 0:
+            enemy.hp = 50
+            if Locationy == -4:
+                main_character.rect.y = window_height - main_character.h
+                Locationyx += 1
+            
+            if Locationy == -2:
+                main_character.rect.x = window_width - main_character.w
+                Locationy += 1
+            main_character.hp = main_heart
+            boss_fight = False
+        Locy = Locationy
+        Locyx = Locationyx
+        Loc = Location
+        if time.monotonic() - time_for_style >= tm:
+            attack_style = random.randint(0,1)
+            once_attack = 1
+            if attack_style == 0:
+                tm = 5
+                time_for_style = time.monotonic()
+            if attack_style == 1:
+                tm = 6
+                time_for_style = time.monotonic()
+
+        if attack_style == 0:
+            if time.monotonic() - time_for_Attack >= 5:
+                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
+                time_for_Attack = time.monotonic()
+                pre_attack_time = time.monotonic()
+            if time.monotonic() - time_for_Attack >= 3:
+                pre_attack_time = time.monotonic()+5
+                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
+                if main_character.rect.x - enemy.rect.x < enemy.w+15 and main_character.rect.x - enemy.rect.x > -enemy.w-15:
+                    if main_character.rect.y - enemy.rect.y < enemy.h+15 and main_character.rect.y - enemy.rect.y > -enemy.h-15:
+                        main_character.hp -= enemy.damage
+                    time_for_Attack = time.monotonic()
+            if time.monotonic() - pre_attack_time >= 1:
+                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[5]),(enemy.w,enemy.h))
+        if attack_style == 1:
+            if once_attack == 1:
+                enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
+                block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
+                block_atack.rect.y = enemy.rect.y-enemy.h
+
+                block_atack1.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
+                block_atack1.rect.y = enemy.rect.y+enemy.h
+
+                block_atack2.rect.x = enemy.rect.x-enemy.w
+                block_atack2.rect.y = enemy.rect.y+enemy.h-(enemy.h/2)
+
+                block_atack3.rect.x = enemy.rect.x+enemy.w
+                block_atack3.rect.y = enemy.rect.y+enemy.h-(enemy.h/2)
+
+                once_attack = 0
+                time_for_Attack = time.monotonic()
+                
+            if time.monotonic() - time_for_Attack >= 1.5: 
+                block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
+                block_atack1.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
+                block_atack2.rect.x = enemy.rect.x-enemy.w
+                block_atack3.rect.x = enemy.rect.x+enemy.w
+                time_for_Attack = time.monotonic()+5
+                
+            if time.monotonic() - time_for_style >= 2.5: 
+                block_atack2.rect.x -= 5
+                block_atack3.rect.x += 5
+                block_atack.rect.y -= 5
+                block_atack1.rect.y += 5
+
+                if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
+                    if time.monotonic() - hp_resiste >= 2:
+                        main_character.hp -= 1
+                        hp_resiste = time.monotonic()
+            
+            if time.monotonic() - time_for_style >= 5:
+                block_atack.rect.x = 1000
+                block_atack1.rect.x = 1000
+                block_atack2.rect.x = 1000
+                block_atack3.rect.x = 1000
+                block_atack4.rect.x = 1000
+                block_atack5.rect.x = 1000
+                block_atack6.rect.x = 1000
+                block_atack7.rect.x = 1000
+                time_for_Attack = time.monotonic()
+
+        if dmgp == 1:
+            if time.monotonic() - time_for_dmg >= 2:
+                    enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
+                    time_for_dmg = time.monotonic()
+                    dmgp = 0
+
+        if enemy.hp <= 0:
+            enemy.rect.x = 1000
+            coins += 10
+            if Locationy == -2:
+                boss_death.append(Locationy)
+            if Locationy == -4:
+                boss_death.append(Locationyx-1)
+            main_character.hp = main_heart
+            boss_fight = False
+            
     clock.tick(100)
     main_character.move()
     pygame.display.update()
 
 
 
-# if Boss_Fight == True:
-#         #відображення атаки
-#         block_atack.reset()
-#         block_atack1.reset()
-#         block_atack2.reset()
-#         block_atack3.reset()
-#         block_atack4.reset()
-#         block_atack5.reset()
-#         block_atack6.reset()
-#         block_atack7.reset()
-#         #????
-#         if main_character.hp <= 0:
-#             enemy.hp = 50
-#             main_character.rect.y = window_height - main_character.h
-#             main_character.hp = main_heart
-#             Fight = False
-#         Loc = Location
-#         if time.monotonic() - time_for_style >= tm:
-#             attack_style = random.randint(0,1)
-#             once_attack = 1
-#             if attack_style == 0:
-#                 tm = 5
-#                 time_for_style = time.monotonic()
-#             if attack_style == 1:
-#                 tm = 6
-#                 time_for_style = time.monotonic()
-
-#         if attack_style == 0:
-#             if time.monotonic() - time_for_Attack >= 5:
-#                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
-#                 time_for_Attack = time.monotonic()
-#                 pre_attack_time = time.monotonic()
-#             if time.monotonic() - time_for_Attack >= 3:
-#                 pre_attack_time = time.monotonic()+5
-#                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[2]),(enemy.w,enemy.h))
-#                 if main_character.rect.x - enemy.rect.x < enemy.w+15 and main_character.rect.x - enemy.rect.x > -enemy.w-15:
-#                     if main_character.rect.y - enemy.rect.y < enemy.h+15 and main_character.rect.y - enemy.rect.y > -enemy.h-15:
-#                         main_character.hp -= enemy.damage
-#                     time_for_Attack = time.monotonic()
-#             if time.monotonic() - pre_attack_time >= 1:
-#                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[5]),(enemy.w,enemy.h))
-#         if attack_style == 1:
-#             if once_attack == 1:
-#                 enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
-#                 block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
-#                 block_atack.rect.y = enemy.rect.y-enemy.h
-
-#                 block_atack1.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
-#                 block_atack1.rect.y = enemy.rect.y+enemy.h
-
-#                 block_atack2.rect.x = enemy.rect.x-enemy.w
-#                 block_atack2.rect.y = enemy.rect.y+enemy.h-(enemy.h/2)
-
-#                 block_atack3.rect.x = enemy.rect.x+enemy.w
-#                 block_atack3.rect.y = enemy.rect.y+enemy.h-(enemy.h/2)
-
-#                 once_attack = 0
-#                 time_for_Attack = time.monotonic()
-                
-#             if time.monotonic() - time_for_Attack >= 1.5: 
-#                 block_atack.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
-#                 block_atack1.rect.x = enemy.rect.x+enemy.w-(enemy.w/2)
-#                 block_atack2.rect.x = enemy.rect.x-enemy.w
-#                 block_atack3.rect.x = enemy.rect.x+enemy.w
-#                 time_for_Attack = time.monotonic()+5
-                
-#             if time.monotonic() - time_for_style >= 2.5: 
-#                 block_atack2.rect.x -= 5
-#                 block_atack3.rect.x += 5
-#                 block_atack.rect.y -= 5
-#                 block_atack1.rect.y += 5
-
-#                 if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
-#                     if time.monotonic() - hp_resiste >= 2:
-#                         main_character.hp -= 1
-#                         hp_resiste = time.monotonic()
-            
-#             if time.monotonic() - time_for_style >= 5:
-#                 block_atack.rect.x = 1000
-#                 block_atack1.rect.x = 1000
-#                 block_atack2.rect.x = 1000
-#                 block_atack3.rect.x = 1000
-#                 block_atack4.rect.x = 1000
-#                 block_atack5.rect.x = 1000
-#                 block_atack6.rect.x = 1000
-#                 block_atack7.rect.x = 1000
-#                 time_for_Attack = time.monotonic()
-
-#         if dmgp == 1:
-#             if time.monotonic() - time_for_dmg >= 2:
-#                     enemy.image = pygame.transform.scale(pygame.image.load(enemy.image_list[0]),(enemy.w,enemy.h))
-#                     time_for_dmg = time.monotonic()
-#                     dmgp = 0
-
-#         if enemy.hp <= 0:
-#             enemy.rect.x = 1000
-#             coins += 5
-#             enemy_death = True
-#             Fight = False
-#             main_character.hp = 3
