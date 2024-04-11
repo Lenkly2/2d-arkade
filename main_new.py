@@ -124,7 +124,7 @@ class Owner():
         global dmgp
         global time_for_dmg
         if time.monotonic() - time_for_style >= tm:
-            attack_style = random.randint(0,1)
+            attack_style = random.randint(0,2)
             once_attack = 1
             if attack_style == 0:
                 tm = 5
@@ -132,7 +132,9 @@ class Owner():
             if attack_style == 1:
                 tm = 6
                 time_for_style = time.monotonic()
-
+            if attack_style == 2:
+                tm = 6
+                time_for_style = time.monotonic()
         if attack_style == 0:
             self.move_enemy()
             if time.monotonic() - time_for_Attack >= 2:
@@ -214,7 +216,20 @@ class Owner():
                 for colid in bl_attack:
                     bl_attack.pop(bl_attack.index(colid))
                 time_for_Attack = time.monotonic()
-        
+        if attack_style == 2:
+            if time.monotonic() - pre_attack_time >= 5:
+                for colid in bl_attack:
+                    bl_attack.pop(bl_attack.index(colid))
+                pre_attack_time = time.monotonic()
+            if time.monotonic() - time_for_Attack >= 2:
+                for i in range (8):
+                    rx = random.randint(10,window_width)
+                    ry = random.randint(10,window_height)
+                    block_atack = Owner(bl_atacck[0],rx,ry,60,60,0,5,bl_atacck,1)
+                    bl_attack.append(block_atack)
+                time_for_Attack = time.monotonic()
+                
+
         if dmgp == 1:
             if time.monotonic() - time_for_dmg >= 2:
                     self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
@@ -774,6 +789,13 @@ while game:
                 coins += 5
                 Fight = False
     if boss_fight == True:
+        for fires in magic_sharp:
+            try:
+                if pygame.sprite.collide_rect(fires,enemy):
+                    en.hp -= wand_dmg
+                    magic_sharp.pop(magic_sharp.index(fires))
+            except:
+                error = 1
         enemy.w = 90
         enemy.h = 100
         #відображення атаки
@@ -812,50 +834,4 @@ while game:
     clock.tick(100)
     main_character.move()
     pygame.display.update()
-
-# if once_attack == 1:
-#                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
-#                 block_atack.rect.x = self.rect.x+self.w-(self.w/2)
-#                 block_atack.rect.y = self.rect.y-self.h
-
-#                 block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
-#                 block_atack1.rect.y = self.rect.y+self.h
-
-#                 block_atack2.rect.x = self.rect.x-self.w
-#                 block_atack2.rect.y = self.rect.y+self.h-(self.h/2)
-
-#                 block_atack3.rect.x = self.rect.x+self.w
-#                 block_atack3.rect.y = self.rect.y+self.h-(self.h/2)
-
-#                 once_attack = 0
-#                 time_for_Attack = time.monotonic()
-                
-#             if time.monotonic() - time_for_Attack >= 1.5: 
-#                 block_atack.rect.x = self.rect.x+self.w-(self.w/2)
-#                 block_atack1.rect.x = self.rect.x+self.w-(self.w/2)
-#                 block_atack2.rect.x = self.rect.x-self.w
-#                 block_atack3.rect.x = self.rect.x+self.w
-#                 time_for_Attack = time.monotonic()+5
-                
-#             if time.monotonic() - time_for_style >= 2.5: 
-#                 block_atack2.rect.x -= 5
-#                 block_atack3.rect.x += 5
-#                 block_atack.rect.y -= 5
-#                 block_atack1.rect.y += 5
-
-#                 if pygame.sprite.collide_rect(main_character,block_atack) or pygame.sprite.collide_rect(main_character,block_atack1) or pygame.sprite.collide_rect(main_character,block_atack2) or pygame.sprite.collide_rect(main_character,block_atack3):
-#                     if time.monotonic() - hp_resiste >= 2:
-#                         main_character.hp -= 1
-#                         hp_resiste = time.monotonic()
-            
-#             if time.monotonic() - time_for_style >= 5:
-#                 block_atack.rect.x = 1000
-#                 block_atack1.rect.x = 1000
-#                 block_atack2.rect.x = 1000
-#                 block_atack3.rect.x = 1000
-#                 block_atack4.rect.x = 1000
-#                 block_atack5.rect.x = 1000
-#                 block_atack6.rect.x = 1000
-#                 block_atack7.rect.x = 1000
-#                 time_for_Attack = time.monotonic()
 
