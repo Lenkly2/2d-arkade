@@ -258,7 +258,7 @@ once_lock = 1
 hp_resiste = time.monotonic()
 time_for_dmg = time.monotonic()
 pre_attack_time = time.monotonic()
-coins = 7777
+coins = 0
 Location = 0
 Locationy = 0
 Locationyx = 0
@@ -536,7 +536,7 @@ while game:
                         boss_fight = False
                 except:
                     boss_fight = True
-                    
+
     if Locationy == -4:
             if Locationyx == 0:
                 if Fight == False:
