@@ -75,7 +75,7 @@ class Owner():
                 if Locationy > 0:
                     Locationy -=1
                     self.rect.x = 0 + self.w
-            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4: 
+            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4 and Locationyx != 1: 
                 Locationy -= 1
                 self.rect.x = 0 + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
@@ -85,11 +85,11 @@ class Owner():
                 self.rect.x = self.rect.x - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
             direct = "left"
-            if self.rect.x <= 0 + self.w and boss_fight == False and Location == 1 and once_lock == 1 and Locationy != "magaz" :
+            if self.rect.x <= 0 + self.w and Location == 1 and once_lock == 1 and Locationy != "magaz" :
                 Locationy +=1
                 self.rect.x = window_width - self.w
             try:
-                if self.rect.x <= 0 + self.w and Locationy <= -1 and Location == 3:
+                if self.rect.x <= 0 + self.w and Locationy <= -1 and Location == 3 and  boss_fight == False and Locationyx == 0:
                     Locationy +=1
                     self.rect.x = window_width - self.w
             except:
@@ -143,8 +143,12 @@ class Owner():
                     dmgp = 0
         if self.hp <= 0:
             self.rect.x = 1000
-            enemys_death.append(Location)
-
+            if Locationy == 0:
+                enemys_death.append(Location)
+            if Locationy <= 0 and Locationyx == 0:
+                enemys_deathy.append(Locationy)
+            if Locationy == -4 and Locationyx <= 0:
+                enemys_deathyx.append(Locationyx)
             if button_press != 1:
                 coins += 5
                 main_character.hp = main_heart
@@ -245,6 +249,8 @@ dmgp = 0
 boss_fight = False
 spawn = True
 Loc = -1
+Locy = -2
+Locyx = -3
 attack_style = 0
 once_attack = 0
 tm = 5
@@ -252,7 +258,7 @@ once_lock = 1
 hp_resiste = time.monotonic()
 time_for_dmg = time.monotonic()
 pre_attack_time = time.monotonic()
-coins = 0
+coins = 7777
 Location = 0
 Locationy = 0
 Locationyx = 0
@@ -262,6 +268,9 @@ wand_dmg = 5
 wand = 0 
 magic_sharp = []
 enemys_death = []
+enemys_deathy = []
+enemys_deathyx = []
+boss_death = []
 enemys = [enemy_golem1,enemy_golem2,enemy_golem3,enemy_golem4,enemy_golem5,enemy_golem6]
 main_heart = 3
 button_press = 0
@@ -292,6 +301,7 @@ while game:
                     try:
                         if enemys_death.index(Location):
                             Fight = False
+
                     except:
                         Fight = True
 
@@ -321,14 +331,14 @@ while game:
             if m_p_x >= 195 and m_p_x <= 250:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= hp_price and main_heart <= 30:
+                        if coins >= hp_price and main_heart < 31:
                             main_character.hp += 2
                             main_heart += 2
                             coins = coins - hp_price
             if m_p_x >= 295 and m_p_x <= 350:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= sword_price and main_character.damage <= 50:
+                        if coins >= sword_price and main_character.damage < 25:
                             main_character.damage += 1
                             coins = coins - sword_price
 
@@ -483,17 +493,70 @@ while game:
                 enemy.hp = 50
 
     if Location == 3:
-        #під нові локації
-        try:
-            if enemys_death.index(3):
-                spawn = False
-        except:
-            if spawn == True:
-                enemy.rect.x = 250
-                enemy.hp = 50
+        if Locationy == 0:
+            try:
+                if enemys_death.index(3):
+                    spawn = False
+            except:
+                if spawn == True:
+                    enemy.rect.x = 200
+                    enemy.hp = 50
+
+        if Locationy == -1:
+            try:
+                if enemys_deathy.index(-1):
+                    spawn = False
+            except:
+                if spawn == True:
+                    enemy.rect.x = 200
+                    enemy.hp = 50
+        if Locationy == -2:
+            if Fight == False:
+                enemy.rect.x = 1000
+            try:
+                if boss_death.index(-2):
+                    boss_fight = False
+            except:
+                boss_fight = True
+            boss_fight = True
+        if Locationy == -3:
+            if Locationyx == 0:
+                try:
+                    if enemys_deathy.index(-3):
+                        spawn = False
+                except:
+                    if spawn == True:
+                        enemy.rect.x = 200
+                        enemy.hp = 50
+            if Locationyx >= 1:
+                if Fight == False:
+                    enemy.rect.x = 1000
+                try:
+                    if boss_death.index(-3):
+                        boss_fight = False
+                except:
+                    boss_fight = True
+                    
+    if Locationy == -4:
+            if Locationyx == 0:
+                if Fight == False:
+                    enemy.rect.x = 1000
+            if Locationyx == -1:
+                try:
+                    if enemys_deathyx.index(-1):
+                        spawn = False
+                except:
+                    if spawn == True:
+                        enemy.rect.x = 200
+                        enemy.hp = 50
+            if Locationyx == -2:
+                if Fight == False:
+                    enemy.rect.x = 1000
+
     if Location == 4:
         if button_press == 0:
             enemy_golem1.rect.x = 1000
+        
 
     # виведення
     for fires in magic_sharp:
@@ -543,10 +606,12 @@ while game:
     if dash_col >= 1:
         window.blit(dash_img,(10,window_height-40))
     # функції
-    if Location == Loc:
-        spawn = False
-    if Location != Loc:
+
+    if Location != Loc or Locationy != Locy or Locationyx != Locyx:
         spawn = True
+
+    if Location == Loc and Locationy == Locy and Locationyx == Locyx:
+        spawn = False
 
     if Fight == True:
         for fires in magic_sharp:
@@ -559,9 +624,10 @@ while game:
                 error = 1
 
 
-
-
+        Locy = Locationy
+        Locyx = Locationyx
         Loc = Location
+
         if button_press != 1:
             if enemy != chest:
                 enemy.move_enemy()
