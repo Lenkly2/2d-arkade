@@ -133,7 +133,7 @@ class Owner():
                 tm = 6
                 time_for_style = time.monotonic()
             if attack_style == 2:
-                tm = 6
+                tm = 7
                 time_for_style = time.monotonic()
         if attack_style == 0:
             self.move_enemy()
@@ -221,14 +221,27 @@ class Owner():
                 for colid in bl_attack:
                     bl_attack.pop(bl_attack.index(colid))
                 pre_attack_time = time.monotonic()
-            if time.monotonic() - time_for_Attack >= 2:
-                for i in range (8):
-                    rx = random.randint(10,window_width)
-                    ry = random.randint(10,window_height)
-                    block_atack = Owner(bl_atacck[0],rx,ry,60,60,0,5,bl_atacck,1)
-                    bl_attack.append(block_atack)
-                time_for_Attack = time.monotonic()
-                
+            if time.monotonic() - time_for_Attack >= 1 and time.monotonic() - time_for_Attack <= 2:
+                if once_attack == 1:
+                    for i in range(8):
+                        rx = random.randint(10,window_width)
+                        ry = random.randint(10,window_height)
+                        block_atack_lum = Owner("attack_be.png",rx,ry,60,60,0,5,None,1)
+                        bl_attack.append(block_atack_lum)
+                    once_attack = 0
+            
+            if time.monotonic() - time_for_Attack >= 2 and time.monotonic() - time_for_Attack <= 5:
+                for block in range(len(bl_attack)):
+                    rx = bl_attack[block].rect.x
+                    ry = bl_attack[block].rect.y
+                    bloc = Owner(bl_atacck[0],rx,ry,60,60,0,5,bl_atacck,1)
+                    bl_attack[block] = bloc
+
+                for k in bl_attack:
+                    if pygame.sprite.collide_rect(k,main_character):
+                        if time.monotonic() - hp_resiste >= 1:
+                            main_character.hp -= 1
+                            hp_resiste = time.monotonic()
 
         if dmgp == 1:
             if time.monotonic() - time_for_dmg >= 2:
@@ -331,7 +344,6 @@ dash_img = pygame.transform.scale(pygame.image.load("dash.png"),(40,20))
 button = pygame.transform.scale(pygame.image.load("button.png"),(50,50))
 pygame.font.init()
 # персонажі
-
 main_images = ['main_character_back.png','main_character_front.png','main_character_left.png','main_character_right.png','main_character_right_attack.png',"main_character_left_attack.png","main_character_back_attack.png","main_character_front_attack.png"]
 main_character = Owner(main_images[1],50,450,50,70,3,3,main_images,3)
 golem_images = ['golem_left.png','golem_right.png','golem_attack.png','golem_left_dmg.png','golem_right_dmg.png','golem_pre_attack.png']
@@ -346,6 +358,7 @@ wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
 bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png']
+block_atack_lum = Owner("attack_be.png",1000,200,20,60,0,5,None,1)
 block_atack = Owner(bl_atacck[0],1000,200,20,60,0,5,bl_atacck,1)
 block_atack2 = Owner(bl_atacck[0],1000,200,60,20,0,5,bl_atacck,1)
 
@@ -634,7 +647,7 @@ while game:
                     spawn = False
             except:
                 if spawn == True:
-                    enemy.rect.x = 200
+                    enemy.rect.x = window_width - 150
                     enemy.hp = 50
         if Locationy == -2:
             if Fight == False and boss_fight == False:
@@ -645,7 +658,7 @@ while game:
             except:
                 if boss_fight == False:
                     enemy_golem1.rect.x = 300
-                    enemy.hp = 100
+                    enemy.hp = 150
                 boss_fight = True
                 
         if Locationy == -3:
