@@ -39,7 +39,7 @@ class Owner():
                 if self.rect.y < 0 and Locationy == -3 and Locationyx < 1:
                     Locationyx += 1
                     self.rect.y = window_height - self.h
-                if self.rect.y < 0 and Locationy == -4 and Locationyx < 0:
+                if self.rect.y < 0 and Locationy == -4 and Locationyx < 0 and boss_fight == False:
                     Locationyx += 1
                     self.rect.y = window_height - self.h
             except:
@@ -59,7 +59,7 @@ class Owner():
                     if Locationy == -3 and Locationyx > 0:
                         Locationyx -= 1
                         self.rect.y = 50
-                    if Locationy == -4 and Locationyx > -3:
+                    if Locationy == -4 and Locationyx > -3 and boss_fight == False:
                         Locationyx -= 1
                         self.rect.y = 50
             except:
@@ -217,11 +217,12 @@ class Owner():
                     bl_attack.pop(bl_attack.index(colid))
                 time_for_Attack = time.monotonic()
         if attack_style == 2:
-            if time.monotonic() - pre_attack_time >= 5:
+            if time.monotonic() - time_for_Attack >= 4.5:
                 for colid in bl_attack:
                     bl_attack.pop(bl_attack.index(colid))
-                pre_attack_time = time.monotonic()
-            if time.monotonic() - time_for_Attack >= 1 and time.monotonic() - time_for_Attack <= 2:
+                if len(bl_attack) == 0:
+                    time_for_Attack = time.monotonic()
+            if time.monotonic() - time_for_Attack >= 0.5 and time.monotonic() - time_for_Attack <= 1.5:
                 if once_attack == 1:
                     for i in range(8):
                         rx = random.randint(10,window_width)
@@ -230,7 +231,7 @@ class Owner():
                         bl_attack.append(block_atack_lum)
                     once_attack = 0
             
-            if time.monotonic() - time_for_Attack >= 2 and time.monotonic() - time_for_Attack <= 5:
+            if time.monotonic() - time_for_Attack >= 2 and time.monotonic() - time_for_Attack <= 4.5:
                 for block in range(len(bl_attack)):
                     rx = bl_attack[block].rect.x
                     ry = bl_attack[block].rect.y
