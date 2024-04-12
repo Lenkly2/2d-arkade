@@ -202,12 +202,11 @@ class Owner():
 
                 once_attack = 0
                 time_for_Attack = time.monotonic()
-                
-            if time.monotonic() - time_for_Attack >= 1 and time.monotonic() - time_for_Attack <= 1.9: 
-                for colid in bl_attack:
-                    bl_attack.pop(bl_attack.index(colid))
+            
 
-            if time.monotonic() - time_for_Attack >= 2 and time.monotonic() - time_for_Attack <= 4.9:
+            if time.monotonic() - time_for_Attack >= 1 and time.monotonic() - time_for_Attack <= 3:
+                heg = 80
+                wid = 40
                 for block in range(len(bl_attack)):
                     rx = bl_attack[block].rect.x
                     ry = bl_attack[block].rect.y
@@ -220,7 +219,7 @@ class Owner():
                             main_character.hp -= 1
                             hp_resiste = time.monotonic()
             
-            if time.monotonic() - time_for_style >= 5:
+            if time.monotonic() - time_for_style >= 3.5:
                 for colid in bl_attack:
                     bl_attack.pop(bl_attack.index(colid))
                 time_for_Attack = time.monotonic()
