@@ -133,7 +133,7 @@ class Owner():
                 tm = 6
                 time_for_style = time.monotonic()
             if attack_style == 2:
-                tm = 7
+                tm = 5.5
                 time_for_style = time.monotonic()
         if attack_style == 0:
             self.move_enemy()
@@ -160,51 +160,59 @@ class Owner():
                 self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
                 xb = self.rect.x+self.w-(self.w/2)
                 yb = self.rect.y-self.h
-                block_atack = Owner(bl_atacck[0],xb,yb,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb,yb-heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb-heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb+wid,yb-heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb+wid,yb-heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb-wid,yb-heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb-wid,yb-heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
 
                 yb = self.rect.y+self.h
-                block_atack = Owner(bl_atacck[0],xb,yb,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb,yb+heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb+heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb+wid,yb+heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb+wid,yb+heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb-wid,yb+heg,wid,heg,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb-wid,yb+heg,wid,heg,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
 
                 xb = self.rect.x-self.w
                 yb = self.rect.y+self.h-(self.h/2)
-                block_atack = Owner(bl_atacck[0],xb,yb,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb-heg,yb,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb-heg,yb,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb-heg,yb+wid,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb-heg,yb+wid,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb-heg,yb-wid,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb-heg,yb-wid,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
 
                 xb = self.rect.x+self.w
-                block_atack = Owner(bl_atacck[0],xb,yb,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb,yb,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb+heg,yb,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb+heg,yb,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb+heg,yb-wid,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb+heg,yb-wid,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
-                block_atack = Owner(bl_atacck[0],xb+heg,yb+wid,heg,wid,0,5,bl_atacck,1)
+                block_atack = Owner(bl_atacck[3],xb+heg,yb+wid,heg,wid,0,5,bl_atacck,1)
                 bl_attack.append(block_atack)
 
                 once_attack = 0
                 time_for_Attack = time.monotonic()
                 
-            if time.monotonic() - time_for_Attack >= 1.5: 
-                time_for_Attack = time.monotonic()+5
+            if time.monotonic() - time_for_Attack >= 1 and time.monotonic() - time_for_Attack <= 1.9: 
+                for colid in bl_attack:
+                    bl_attack.pop(bl_attack.index(colid))
+
+            if time.monotonic() - time_for_Attack >= 2 and time.monotonic() - time_for_Attack <= 4.9:
+                for block in range(len(bl_attack)):
+                    rx = bl_attack[block].rect.x
+                    ry = bl_attack[block].rect.y
+                    bloc = Owner(bl_atacck[0],rx,ry,heg,wid,0,5,bl_atacck,1)
+                    bl_attack[block] = bloc
     
                 for colid in bl_attack:
                     if pygame.sprite.collide_rect(main_character,colid) :
@@ -227,7 +235,7 @@ class Owner():
                     for i in range(8):
                         rx = random.randint(10,window_width)
                         ry = random.randint(10,window_height)
-                        block_atack_lum = Owner("attack_be.png",rx,ry,60,60,0,5,None,1)
+                        block_atack_lum = Owner("attack_be.png",rx,ry,100,100,0,5,None,1)
                         bl_attack.append(block_atack_lum)
                     once_attack = 0
             
@@ -235,7 +243,7 @@ class Owner():
                 for block in range(len(bl_attack)):
                     rx = bl_attack[block].rect.x
                     ry = bl_attack[block].rect.y
-                    bloc = Owner(bl_atacck[0],rx,ry,60,60,0,5,bl_atacck,1)
+                    bloc = Owner(bl_atacck[0],rx,ry,100,100,0,5,bl_atacck,1)
                     bl_attack[block] = bloc
 
                 for k in bl_attack:
@@ -358,7 +366,7 @@ wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
 
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
-bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png']
+bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png','attack_be.png']
 block_atack_lum = Owner("attack_be.png",1000,200,20,60,0,5,None,1)
 block_atack = Owner(bl_atacck[0],1000,200,20,60,0,5,bl_atacck,1)
 block_atack2 = Owner(bl_atacck[0],1000,200,60,20,0,5,bl_atacck,1)
