@@ -308,6 +308,7 @@ class Owner():
         global dmgp
         global time_for_dmg
         global coins
+        global enemy_death_count
         global Fight
         if time.monotonic() - time_for_Attack >= 2:
             pre_attack_time = time.monotonic()+2
@@ -340,6 +341,7 @@ class Owner():
                 enemys_deathyx.append(Locationyx)
             if button_press != 1:
                 coins += 5
+                enemy_death_count += 1
                 main_character.hp = main_heart
                 Fight = False
             if button_press == 1 and enemy_golem1.hp <= 0 and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
@@ -408,7 +410,7 @@ enemy_golem4 = Owner(golem_images[0],1500,100,70,80,60,2,golem_images,1)
 enemy_golem5 = Owner(golem_images[0],1500,200,70,80,60,2,golem_images,1)
 enemy_golem6 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
 wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
-wall = Owner("attack_bl.png",1500,300,50,400,60,2,None,1)
+wall = Owner("wall.png",1500,0,50,window_height,60,2,None,1)
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
 bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png','attack_be.png']
@@ -453,6 +455,7 @@ hotbar = 1
 shop = 0
 wand_dmg = 5
 wand = 0 
+enemy_death_count = 0
 magic_sharp = []
 enemys_death = []
 enemys_deathy = []
@@ -474,7 +477,7 @@ while game:
         if e.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pressed()[0]:
                 if hotbar == 1:
-                    if time.monotonic() - time_for_cooldown >= 0.7:
+                    if time.monotonic() - time_for_cooldown >= 0.6:
                         
                         main_character.attack(enemy)
                         for m in enemys:
@@ -483,10 +486,10 @@ while game:
                         time_for_cooldown = time.monotonic()
                 if hotbar == 2 and wand == 1 and len(magic_sharp) < 7:
                     wx,wy =  pygame.mouse.get_pos()   
-                    if time.monotonic() - time_for_cooldown >= 0.4:
+                    if time.monotonic() - time_for_cooldown >= 0.3:
                         wand_fire = Owner("magic.png",wx,wy,50,50,1,2,None,5)
                         magic_sharp.append(wand_fire)
-                    time_for_cooldown = time.monotonic()
+                        time_for_cooldown = time.monotonic()
                     try:
                         if enemys_death.index(Location):
                             Fight = False
@@ -631,8 +634,9 @@ while game:
             if Locationyx == 0:
                 window.blit(background_right2,(0,0))
             if Locationyx >= 1:
-                window.blit(background4,(0,0))
-                window.blit(house,(100,50))
+                if Locationy != "magaz1":
+                    window.blit(background4,(0,0))
+                    window.blit(house,(100,50))
         if Locationy == "magaz1":
             window.blit(house_in,(0,0))
             if shop == 1:
@@ -714,6 +718,12 @@ while game:
 
         if Locationy == -1:
             wall.reset()
+            if enemy_death_count <= 6:
+                if pygame.sprite.collide_rect(main_character,wall):
+                    main_character.rect.x -= main_character.speed
+                wall.rect.x = window_width- 50
+            if enemy_death_count > 6:
+                wall.rect.x = 1500
             try:
                 if enemys_deathy.index(-1):
                     spawn = False
@@ -861,6 +871,7 @@ while game:
 
             if enemy_golem1.hp and enemy_golem2.hp <= 0 and enemy_golem3.hp <= 0 and enemy_golem4.hp <= 0 and enemy_golem5.hp <= 0 and enemy_golem6.hp <= 0:
                 coins += 50
+                enemy_death_count += 6
                 button_press = 0
             if main_character.hp <= 0:
                 enemy.hp = 50
