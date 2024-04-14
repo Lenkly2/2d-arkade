@@ -67,11 +67,11 @@ class Owner():
         if Key[pygame.K_d] and self.rect.x < window_width - self.w:
             if Locationy != "magaz":
                 self.rect.x = self.rect.x + self.speed
-            if Locationy == "magaz" and self.rect.x <= window_width-100:
+            if Locationy == "magaz" and self.rect.x <= window_width-100 or Locationy == "magaz1" and self.rect.x <= window_width-100:
                 self.rect.x = self.rect.x + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[3]),(self.w,self.h))
             direct = "right"
-            if self.rect.x >= window_width - self.w and boss_fight == False and Location == 1 and Locationy != "magaz":
+            if self.rect.x >= window_width - self.w and boss_fight == False and Location == 1 and Locationy != "magaz" and Locationy != "magaz1":
                 if Locationy > 0:
                     Locationy -=1
                     self.rect.x = 0 + self.w
@@ -81,11 +81,11 @@ class Owner():
         if Key[pygame.K_a] and self.rect.x > 0:
             if Locationy != "magaz":
                 self.rect.x = self.rect.x - self.speed
-            if Locationy == "magaz" and self.rect.x >= 75:
+            if Locationy == "magaz" and self.rect.x >= 75 or Locationy == "magaz1" and self.rect.x >= 75:
                 self.rect.x = self.rect.x - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[2]),(self.w,self.h))
             direct = "left"
-            if self.rect.x <= 0 + self.w and Location == 1 and once_lock == 1 and Locationy != "magaz" :
+            if self.rect.x <= 0 + self.w and Location == 1 and once_lock == 1 and Locationy != "magaz" and Locationy != "magaz1":
                 Locationy +=1
                 self.rect.x = window_width - self.w
             try:
@@ -512,14 +512,8 @@ while game:
                         for n in enemys:
                             n.hp = 60
                         button_press = 1
-        if Locationy == "magaz":
+        if Locationy == "magaz1":
             m_p_x, m_p_y =  pygame.mouse.get_pos()         
-            if m_p_x >= 95 and m_p_x <= 150:
-                if m_p_y >= 150 and m_p_y <= 160:
-                    if pygame.mouse.get_pressed()[0] and shop == 1:
-                        if coins >= wand_price and wand == 0:
-                            wand = 1
-                            coins = coins - wand_price
             if m_p_x >= 195 and m_p_x <= 250:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
@@ -531,6 +525,27 @@ while game:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
                         if coins >= sword_price and main_character.damage < 25:
+                            main_character.damage += 1
+                            coins = coins - sword_price
+        if Locationy == "magaz":
+            m_p_x, m_p_y =  pygame.mouse.get_pos()         
+            if m_p_x >= 95 and m_p_x <= 150:
+                if m_p_y >= 150 and m_p_y <= 160:
+                    if pygame.mouse.get_pressed()[0] and shop == 1:
+                        if coins >= wand_price and wand == 0:
+                            wand = 1
+                            coins = coins - wand_price
+            if m_p_x >= 195 and m_p_x <= 250:
+                if m_p_y >= 150 and m_p_y <= 160:
+                    if pygame.mouse.get_pressed()[0] and shop == 1:
+                        if coins >= hp_price and main_heart < 21:
+                            main_character.hp += 2
+                            main_heart += 2
+                            coins = coins - hp_price
+            if m_p_x >= 295 and m_p_x <= 350:
+                if m_p_y >= 150 and m_p_y <= 160:
+                    if pygame.mouse.get_pressed()[0] and shop == 1:
+                        if coins >= sword_price and main_character.damage < 15:
                             main_character.damage += 1
                             coins = coins - sword_price
 
@@ -548,17 +563,19 @@ while game:
                     main_character.dash()
                     dash_col -= 1
             if key[pygame.K_e] and main_character.rect.x > 330 and main_character.rect.x < 400 and main_character.rect.y > 220 and main_character.rect.y < 260:
-                if Locationy == 1 or Locationy == -3 and Locationyx == 1:
+                if Locationy == 1 :
                     Locationy = "magaz"
+                if Locationy == -3 and Locationyx == 1:
+                    Locationy = "magaz1"
             if key[pygame.K_e] and main_character.rect.x > 100 and main_character.rect.x < 150 and main_character.rect.y > 340 and main_character.rect.y < 440:
                 if Locationy == "magaz":
                     Locationy = 1
-                if Locationyx == 1:
+                if Locationy == "magaz1":
                     Locationy = -3
             if key[pygame.K_f]:
-                if Locationy == "magaz" and main_character.rect.x > 230 and main_character.rect.x < 320 and main_character.rect.y > 250 and main_character.rect.y < 300:
+                if Locationy == "magaz" and main_character.rect.x > 230 and main_character.rect.x < 320 and main_character.rect.y > 250 and main_character.rect.y < 300 or Locationy == "magaz1" and main_character.rect.x > 230 and main_character.rect.x < 320 and main_character.rect.y > 250 and main_character.rect.y < 300:
                     shop = 1
-                if Locationy != "magaz" or main_character.rect.x < 230 or main_character.rect.x > 320 or main_character.rect.y < 250 or main_character.rect.y > 300:
+                if Locationy != "magaz" and Locationy != "magaz1" or main_character.rect.x < 230 or main_character.rect.x > 320 or main_character.rect.y < 250 or main_character.rect.y > 300:
                     shop = 0   
     #відновлення ривка
     if time.monotonic() - dash_time >= 5:
@@ -597,7 +614,8 @@ while game:
                 window.blit(mfont.render(str(sword_price),True,(0,0,0)),(330,30))
                 window.blit(mfont.render("Купити",True,(0,0,0)),(300,150))
             once_lock = 0
-        if Locationy != 1 and Locationy != "magaz":
+        
+        if Locationy != 1 and Locationy != "magaz" and Locationy != "magaz1":
             once_lock = 1
 
     if Location == 2:
@@ -615,26 +633,26 @@ while game:
             if Locationyx >= 1:
                 window.blit(background4,(0,0))
                 window.blit(house,(100,50))
-        if Locationy == "magaz":
+        if Locationy == "magaz1":
             window.blit(house_in,(0,0))
             if shop == 1:
+                window.blit(hotbar_img,(300,75))
+                # window.blit(wand_img,(300,75))
+                # window.blit(coin,(300,30))
+                # window.blit(mfont.render(str(wand_price),True,(0,0,0)),(330,30))
+                # window.blit(mfont.render("Купити",True,(0,0,0)),(300,150))
+
                 window.blit(hotbar_img,(100,75))
-                window.blit(wand_img,(100,75))
-                window.blit(coin,(100,30))
-                window.blit(mfont.render(str(wand_price),True,(0,0,0)),(130,30))
+                window.blit(heart_img,(100,75))
+                window.blit(mfont.render(str(hp_price),True,(0,0,0)),(130,30))
                 window.blit(mfont.render("Купити",True,(0,0,0)),(100,150))
+                window.blit(coin,(100,30))
 
                 window.blit(hotbar_img,(200,75))
-                window.blit(heart_img,(200,75))
-                window.blit(mfont.render(str(hp_price),True,(0,0,0)),(230,30))
-                window.blit(mfont.render("Купити",True,(0,0,0)),(200,150))
+                window.blit(sword_img,(200,75))
                 window.blit(coin,(200,30))
-
-                window.blit(hotbar_img,(300,75))
-                window.blit(sword_img,(300,75))
-                window.blit(coin,(300,30))
-                window.blit(mfont.render(str(sword_price),True,(0,0,0)),(330,30))
-                window.blit(mfont.render("Купити",True,(0,0,0)),(300,150))
+                window.blit(mfont.render(str(sword_price),True,(0,0,0)),(230,30))
+                window.blit(mfont.render("Купити",True,(0,0,0)),(200,150))
         if Locationy == -4:
             if Locationyx == 0:
                 window.blit(background_right3,(0,0))
