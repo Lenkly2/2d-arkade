@@ -123,8 +123,6 @@ class Owner():
         global hp_resiste
         global dmgp
         global time_for_dmg
-        global once_attack1
-        global cou
         if time.monotonic() - time_for_style >= tm:
             attack_style = random.randint(0,2)
             once_attack = 1
@@ -275,7 +273,14 @@ class Owner():
                     for i in range(8):
                         rx = random.randint(10,window_width)
                         ry = random.randint(10,window_height)
-                        block_atack_lum = Owner("attack_be.png",rx,ry,100,100,0,5,None,1)
+                        block_atack_lum = Owner("attack_be.png",rx,ry,160,160,0,5,None,1)
+                        try:
+                            if pygame.sprite.collide_rect(block_atack_lum,bl_attack[i]):
+                                rx = random.randint(10,window_width)
+                                ry = random.randint(10,window_height)
+                                block_atack_lum = Owner("attack_be.png",rx,ry,160,160,0,5,None,1)
+                        except:
+                            error = 1
                         bl_attack.append(block_atack_lum)
                     once_attack = 0
             
@@ -283,7 +288,7 @@ class Owner():
                 for block in range(len(bl_attack)):
                     rx = bl_attack[block].rect.x
                     ry = bl_attack[block].rect.y
-                    bloc = Owner(bl_atacck[0],rx,ry,100,100,0,5,bl_atacck,1)
+                    bloc = Owner(bl_atacck[0],rx,ry,160,160,0,5,bl_atacck,1)
                     bl_attack[block] = bloc
 
                 for k in bl_attack:
@@ -419,8 +424,6 @@ wand_price = 20
 hp_price = 15
 sword_price = 10
 #змінні
-cou = 0
-once_attack1 = 1
 direct = "up"
 mfont = pygame.font.Font(None,20)
 Fight = False
@@ -708,7 +711,7 @@ while game:
             except:
                 if boss_fight == False:
                     enemy_golem1.rect.x = 300
-                    enemy.hp = 150
+                    enemy.hp = 300
                 boss_fight = True
                 
         if Locationy == -3:
@@ -745,7 +748,7 @@ while game:
                 except:
                     if boss_fight == False:
                         enemy_golem1.rect.x = 300
-                        enemy.hp = 100
+                        enemy.hp = 300
                     boss_fight = True
 
     if Location == 4:
@@ -866,6 +869,8 @@ while game:
             bl_v.reset()
         #????
         if main_character.hp <= 0:
+            enemy.w = 70
+            enemy.h = 80
             enemy.hp = 50
             if Locationy == -4:
                 main_character.rect.y = window_height - main_character.h
