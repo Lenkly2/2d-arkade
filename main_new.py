@@ -26,9 +26,9 @@ class Owner():
         global Location
         global Locationyx
         if Key[pygame.K_w] and self.rect.y > -50:
-            if Locationy != "magaz":
+            if Locationy != "magaz" and Locationy != "magaz1":
                 self.rect.y = self.rect.y - self.speed
-            if Locationy == "magaz" and self.rect.y >= 250:
+            if Locationy == "magaz" and self.rect.y >= 250 or Locationy == "magaz1" and self.rect.y >= 250:
                 self.rect.y = self.rect.y - self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[0]),(self.w,self.h))
             direct = "up"
@@ -45,9 +45,9 @@ class Owner():
             except:
                 error = 1
         if Key[pygame.K_s] and self.rect.y < window_height - (self.h/2):
-            if Locationy != "magaz":
+            if Locationy != "magaz" and Locationy != "magaz1":
                 self.rect.y = self.rect.y + self.speed
-            if Locationy == "magaz" and self.rect.y <= window_height-175:
+            if Locationy == "magaz" and self.rect.y <= window_height-175 or Locationy == "magaz1" and self.rect.y <= window_height-175:
                 self.rect.y = self.rect.y + self.speed
             self.image = pygame.transform.scale(pygame.image.load(self.image_list[1]),(self.w,self.h))
             direct = "down"
@@ -65,7 +65,7 @@ class Owner():
             except:
                 error = 1
         if Key[pygame.K_d] and self.rect.x < window_width - self.w:
-            if Locationy != "magaz":
+            if Locationy != "magaz" and Locationy != "magaz1":
                 self.rect.x = self.rect.x + self.speed
             if Locationy == "magaz" and self.rect.x <= window_width-100 or Locationy == "magaz1" and self.rect.x <= window_width-100:
                 self.rect.x = self.rect.x + self.speed
@@ -75,11 +75,11 @@ class Owner():
                 if Locationy > 0:
                     Locationy -=1
                     self.rect.x = 0 + self.w
-            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4 and Locationyx != 1 and boss_fight == False: 
+            if self.rect.x >= window_width - self.w and Location == 3 and Locationy > -4 and Locationyx != 1 and boss_fight == False and Locationy != "magaz1": 
                 Locationy -= 1
                 self.rect.x = 0 + self.w
         if Key[pygame.K_a] and self.rect.x > 0:
-            if Locationy != "magaz":
+            if Locationy != "magaz" and Locationy != "magaz1":
                 self.rect.x = self.rect.x - self.speed
             if Locationy == "magaz" and self.rect.x >= 75 or Locationy == "magaz1" and self.rect.x >= 75:
                 self.rect.x = self.rect.x - self.speed
@@ -408,7 +408,7 @@ enemy_golem4 = Owner(golem_images[0],1500,100,70,80,60,2,golem_images,1)
 enemy_golem5 = Owner(golem_images[0],1500,200,70,80,60,2,golem_images,1)
 enemy_golem6 = Owner(golem_images[0],1500,300,70,80,60,2,golem_images,1)
 wand_fire = Owner("magic.png",0,0,50,50,1,2,None,5)
-
+wall = Owner("attack_bl.png",1500,300,50,400,60,2,None,1)
 chest_images = ['chest.png','chest.png','chest.png','chest.png']
 chest = Owner(chest_images[0],1000,200,90,80,3,0,chest_images,None)
 bl_atacck = ['attack_bl.png','attack_bl_upr.png','attack_bl_upl.png','attack_be.png']
@@ -445,7 +445,7 @@ once_lock = 1
 hp_resiste = time.monotonic()
 time_for_dmg = time.monotonic()
 pre_attack_time = time.monotonic()
-coins = 0
+coins = 999
 Location = 0
 Locationy = 0
 Locationyx = 0
@@ -514,14 +514,14 @@ while game:
                         button_press = 1
         if Locationy == "magaz1":
             m_p_x, m_p_y =  pygame.mouse.get_pos()         
-            if m_p_x >= 195 and m_p_x <= 250:
+            if m_p_x >= 95 and m_p_x <= 150:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
                         if coins >= hp_price and main_heart < 31:
                             main_character.hp += 2
                             main_heart += 2
                             coins = coins - hp_price
-            if m_p_x >= 295 and m_p_x <= 350:
+            if m_p_x >= 195 and m_p_x <= 250:
                 if m_p_y >= 150 and m_p_y <= 160:
                     if pygame.mouse.get_pressed()[0] and shop == 1:
                         if coins >= sword_price and main_character.damage < 25:
@@ -713,6 +713,7 @@ while game:
                     enemy.hp = 50
 
         if Locationy == -1:
+            wall.reset()
             try:
                 if enemys_deathy.index(-1):
                     spawn = False
